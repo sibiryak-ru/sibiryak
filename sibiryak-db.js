@@ -1,5 +1,5 @@
 /* ============================================================
-   СИБИРЯК · СЛОЙ ДАННЫХ И АВТОПОДБОР v1
+   СИБИРЯК · СЛОЙ ДАННЫХ И АВТОПОДБОР v1.1 + АВАТАРЫ
    Supabase (PostgREST, без SDK) + гео-матчинг + статусы
    ============================================================ */
 
@@ -28,7 +28,30 @@ const SB = {
   },
   select(t,q=''){ return this.req(t+'?'+q) },
   upsert(t,rows){ return this.req(t+'?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(rows)}) },
-  insert(t,rows){ return this.req(t,{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(rows)}) }
+  insert(t,rows){ return this.req(t,{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify(rows)}) },
+  storage:{
+    from(bucket){
+      return {
+        async upload(path,file,opts={}){
+          const fd=new FormData();
+          fd.append('cacheControl',opts.cacheControl||'3600');
+          if(opts.upsert) fd.append('upsert','true');
+          fd.append('file',file);
+          const r=await fetch(SB.cfg.url+'/storage/v1/object/'+bucket+'/'+path,{
+            method:'POST',
+            headers:{Authorization:'Bearer '+SB.cfg.key,apikey:SB.cfg.key},
+            body:fd
+          });
+          if(!r.ok){const e=await r.json();return{data:null,error:e}}
+          const d=await r.json();
+          return{data:d,error:null};
+        },
+        getPublicUrl(path){
+          return{data:{publicUrl:SB.cfg.url+'/storage/v1/object/public/'+bucket+'/'+path}};
+        }
+      };
+    }
+  }
 };
 
 /* ---------- SQL СХЕМА (копируется из приложения) ---------- */
@@ -47,6 +70,7 @@ create table if not exists seekers(
   availability text default 'free',
   rating numeric default 0,
   about text,
+  avatar_url text,
   updated_at timestamptz default now()
 );
 
@@ -87,8 +111,6 @@ alter table seekers enable row level security;
 alter table vacancies enable row level security;
 alter table applications enable row level security;
 
--- ВНИМАНИЕ: ДЕМО-ПОЛИТИКИ. Открытый доступ для anon-ключа.
--- Перед реальным запуском заменить на политики по auth.uid().
 drop policy if exists demo_all on seekers;
 drop policy if exists demo_all on vacancies;
 drop policy if exists demo_all on applications;
@@ -145,9 +167,11 @@ function sbMigrate(){
   p.salary_min=p.salary_min||60000;
   p.exp_years=p.exp_years||((db.resumes[0]&&db.resumes[0].exp)||3);
   p.skills=p.skills||((db.resumes[0]&&db.resumes[0].skills)||'Вождение, логистика');
+  p.avatar_url=p.avatar_url||null; // <-- ДОБАВЛЕНО
   Object.assign(p,coords(p.city));
   db.company.city=db.company.city||'Барнаул';
   db.company.radius_km=db.company.radius_km||60;
+  db.company.avatar_url=db.company.avatar_url||null; // <-- ДОБАВЛЕНО
   db.vacancies.forEach(v=>{
     v.city=v.city||db.company.city;
     v.radius_km=v.radius_km||db.company.radius_km;
@@ -158,6 +182,7 @@ function sbMigrate(){
     c.availability=c.availability||(c.status==='Нанят'?'busy':'free');
     c.salary_min=c.salary_min||55000;
     c.radius_km=c.radius_km||40;
+    c.avatar_url=c.avatar_url||null; // <-- ДОБАВЛЕНО
     Object.assign(c,coords(c.city));
   });
   db.cloudSeekers=db.cloudSeekers||[];
@@ -171,7 +196,8 @@ function normSeeker(r){
   return {id:r.id,name:r.name||'Без имени',role:r.role||r.about||'',city:r.city||'',lat:r.lat,lng:r.lng,
     radius_km:r.radius_km||30,skills:Array.isArray(r.skills)?r.skills.join(', '):(r.skills||''),
     exp:r.exp!=null?r.exp:(r.exp_years||0),salary_min:r.salary_min||0,
-    availability:r.availability||'free',rating:r.rating||0,src:r.src||'local'};
+    availability:r.availability||'free',rating:r.rating||0,src:r.src||'local',
+    avatar_url:r.avatar_url||null}; // <-- ДОБАВЛЕНО
 }
 function normVacancy(r){
   return {id:r.id,title:r.title||'Вакансия',company:r.company||'',city:r.city||'',lat:r.lat,lng:r.lng,
@@ -199,7 +225,6 @@ function vacancyPool(){
 /* ---------- ДВИЖОК АВТОПОДБОРА ---------- */
 function matchPair(s,v){
   const reasons=[];let score=0;
-  // География — до 40
   let dist=null;
   if(cityKey(s.city)&&cityKey(s.city)===cityKey(v.city)){score+=40;reasons.push('📍 один город')}
   else{
@@ -209,24 +234,65 @@ function matchPair(s,v){
     else if(dist!=null){reasons.push('📍 '+Math.round(dist)+' км — вне радиуса')}
     else reasons.push('📍 город не совпадает');
   }
-  // Навыки — до 30
   const vs=skillArr(v.skills),ss=skillArr(s.skills);
   const hit=vs.filter(x=>ss.some(y=>y.includes(x)||x.includes(y)));
   if(vs.length){const p=Math.round(30*hit.length/vs.length);score+=p;reasons.push('🛠 навыки '+hit.length+'/'+vs.length)}
   else{score+=15;reasons.push('🛠 требования не заданы')}
-  // Статус — до 15
   if(s.availability==='free'){score+=15;reasons.push('🟢 свободен')}
   else if(s.availability==='part'){score+=8;reasons.push('🟡 подработка')}
   else reasons.push('🔴 занят');
-  // Зарплата — до 10
   if(!s.salary_min||v.salary>=s.salary_min){score+=10;reasons.push('💰 по деньгам')}
   else reasons.push('💰 ниже ожиданий');
-  // Опыт — до 5
   if(s.exp>=(v.exp_min||0)){score+=5;reasons.push('📈 опыт ок')}
   else reasons.push('📈 мало опыта');
   return {score:Math.max(0,Math.min(100,score)),reasons,dist};
 }
 const scoreColor=n=>n>=70?'var(--pine)':n>=45?'var(--amber)':'var(--rose)';
+
+/* ========== ЗАГРУЗКА АВАТАРА ========== */
+async function uploadAvatar(file,targetId,targetType){
+  if(!SB.on()){toast('Сначала подключите базу');return null}
+  const ext=file.name.split('.').pop().toLowerCase();
+  const fileName=`${targetType}/${targetId}.${ext}`;
+  try{
+    const{data,error}=await SB.storage.from('avatars').upload(fileName,file,{cacheControl:'3600',upsert:true});
+    if(error)throw error;
+    const{data:{publicUrl}}=SB.storage.from('avatars').getPublicUrl(fileName);
+    return publicUrl;
+  }catch(e){toast('Ошибка загрузки: '+e.message);return null}
+}
+
+function triggerAvatarUpload(targetId,targetType){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='image/*';
+  input.capture='user';
+  input.onchange=async(e)=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    toast('Загрузка...');
+    const url=await uploadAvatar(file,targetId,targetType);
+    if(url){
+      if(targetType==='seeker'){
+        const s=db.candidates.find(x=>x.id===targetId);
+        if(s)s.avatar_url=url;
+        if(targetId===db.profile.sid)db.profile.avatar_url=url;
+      }else if(targetType==='company'){
+        db.company.avatar_url=url;
+      }
+      save();
+      rerender();
+      toast('Аватар обновлён');
+    }
+  };
+  input.click();
+}
+
+function avatarHtml(url,name,size=62){
+  if(url)return `<img src="${esc(url)}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:1.5px solid var(--line2)">`;
+  const initials=name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(135deg,var(--bg2),var(--bg1));border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:${size/2.2}px;color:var(--ice)">${initials}</div>`;
+}
 
 /* ---------- МОДУЛЬ: БАЗА ДАННЫХ ---------- */
 function mDatabase(){
@@ -268,9 +334,11 @@ async function sbPush(){
     const p=db.profile;
     const me={id:p.sid,name:p.name,city:p.city,lat:p.lat,lng:p.lng,radius_km:p.radius_km,skills:p.skills,
       exp_years:p.exp_years,salary_min:p.salary_min,availability:p.availability,
-      rating:+(ratingData().score/20).toFixed(2),about:(db.resumes[0]&&db.resumes[0].about)||''};
+      rating:+(ratingData().score/20).toFixed(2),about:(db.resumes[0]&&db.resumes[0].about)||'',
+      avatar_url:p.avatar_url||null}; // <-- ДОБАВЛЕНО
     const cands=db.candidates.map(c=>({id:'c_'+c.id,name:c.name,city:c.city,lat:c.lat,lng:c.lng,radius_km:c.radius_km,
-      skills:c.skills.join(', '),exp_years:c.exp,salary_min:c.salary_min,availability:c.availability,rating:c.rating,about:c.role}));
+      skills:c.skills.join(', '),exp_years:c.exp,salary_min:c.salary_min,availability:c.availability,rating:c.rating,about:c.role,
+      avatar_url:c.avatar_url||null})); // <-- ДОБАВЛЕНО
     const vacs=db.vacancies.map(v=>({id:v.id,company:db.company.name,title:v.title,city:v.city,lat:v.lat,lng:v.lng,
       radius_km:v.radius_km,skills:v.skills,salary:v.salary,exp_min:v.exp_min||0,
       status:v.status==='Открыта'?'open':'closed',descr:v.desc||''}));
@@ -295,15 +363,29 @@ function mGeoStatus(st){
   const isCo=db.profile.role==='company';
   const o=isCo?db.company:db.profile;
   const dl=`<datalist id="city-dl">${CITY_LIST.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>`;
+  
+  // Аватар для компании или соискателя
+  const avatarTargetId = isCo ? 'company' : db.profile.sid;
+  const avatarTargetType = isCo ? 'company' : 'seeker';
+  const currentAvatarUrl = isCo ? db.company.avatar_url : db.profile.avatar_url;
+  const avatarDisplay = isCo ? db.company.name : db.profile.name;
+  
+  const avatarSection = `<div style="text-align:center;margin-bottom:16px">
+    <div style="cursor:pointer;display:inline-block" onclick="triggerAvatarUpload('${avatarTargetId}','${avatarTargetType}')">
+      ${avatarHtml(currentAvatarUrl, avatarDisplay, 80)}
+      <div style="font-size:11px;color:var(--faint);margin-top:6px">Нажмите, чтобы изменить фото</div>
+    </div>
+  </div>`;
+  
   if(isCo){
-    return `${dl}<div class="card"><div class="card-title">География компании</div>
+    return `${dl}${avatarSection}<div class="card"><div class="card-title">География компании</div>
       <label class="lbl">Город</label><input class="input" id="g-city" list="city-dl" value="${esc(o.city)}">
       <label class="lbl">Радиус поиска по умолчанию: <b id="rad-lbl">${o.radius_km} км</b></label>
       <input type="range" min="10" max="300" step="10" value="${o.radius_km}" style="width:100%;accent-color:var(--ice);margin-bottom:14px" oninput="document.getElementById('rad-lbl').textContent=this.value+' км'" id="g-rad">
       <button class="btn btn-primary" onclick="geoSaveCompany()">💾 Сохранить и применить к вакансиям</button>
       <div style="font-size:12px;color:var(--faint)">Координаты определяются по городу автоматически. Радиус задаёт зону, внутри которой соискатели считаются «рядом».</div></div>`;
   }
-  return `${dl}<div class="card"><div class="card-title">Мой статус</div>
+  return `${dl}${avatarSection}<div class="card"><div class="card-title">Мой статус</div>
     <div class="chips">${Object.entries(AVAIL).map(([k,a])=>`<button class="chip ${db.profile.availability===k?'on':''}" onclick="setAvail('${k}')">${a.i} ${a.t}</button>`).join('')}</div>
     <div style="font-size:12px;color:var(--faint)">«Занят» исключает вас из подборки работодателей, «Свободен» даёт максимальный приоритет.</div></div>
   <div class="card"><div class="card-title">География и ожидания</div>
@@ -358,7 +440,7 @@ function mAutoMatch(st){
     const avg=rows.length?Math.round(rows.reduce((a,b)=>a+b.m.score,0)/rows.length):0;
     return head+`<div class="card">${sel}
       <div class="kpis" style="margin:8px 0 0"><div class="kpi"><b>${rows.length}</b><span>ПОДОБРАНО</span></div><div class="kpi"><b>${avg}%</b><span>СРЕДНЕЕ СОВПАДЕНИЕ</span></div><div class="kpi"><b>${rows.filter(r=>r.m.score>=70).length}</b><span>СИЛЬНЫХ</span></div></div></div>
-      <div class="card">${rows.map(x=>`<div class="row" onclick="amSeekerView('${x.s.id}','${v.id}')"><div class="ri">${availOf(x.s.availability).i}</div><div class="rb"><div class="rt">${esc(x.s.name)}</div><div class="rs">${esc(x.s.role||x.s.skills).slice(0,44)} · ${esc(x.s.city)}${x.m.dist!=null?' · '+Math.round(x.m.dist)+' км':''}</div><div class="chips" style="margin:6px 0 0">${x.m.reasons.slice(0,3).map(r=>`<span class="chip" style="padding:2px 7px;font-size:10px">${r}</span>`).join('')}</div></div><div class="rr" style="color:${scoreColor(x.m.score)};font-size:16px">${x.m.score}%</div></div>`).join('')||'<div class="empty">Никто не подошёл — расширьте радиус или снизьте порог</div>'}</div>`;
+      <div class="card">${rows.map(x=>`<div class="row" onclick="amSeekerView('${x.s.id}','${v.id}')"><div class="ri">${avatarHtml(x.s.avatar_url,x.s.name,36)}</div><div class="rb"><div class="rt">${esc(x.s.name)}</div><div class="rs">${esc(x.s.role||x.s.skills).slice(0,44)} · ${esc(x.s.city)}${x.m.dist!=null?' · '+Math.round(x.m.dist)+' км':''}</div><div class="chips" style="margin:6px 0 0">${x.m.reasons.slice(0,3).map(r=>`<span class="chip" style="padding:2px 7px;font-size:10px">${r}</span>`).join('')}</div></div><div class="rr" style="color:${scoreColor(x.m.score)};font-size:16px">${x.m.score}%</div></div>`).join('')||'<div class="empty">Никто не подошёл — расширьте радиус или снизьте порог</div>'}</div>`;
   }
 
   const me=normSeeker({...db.profile,id:db.profile.sid,exp:db.profile.exp_years});
@@ -368,7 +450,7 @@ function mAutoMatch(st){
     .sort((a,b)=>b.m.score-a.m.score).slice(0,25);
   const avg=rows.length?Math.round(rows.reduce((a,b)=>a+b.m.score,0)/rows.length):0;
   const a=availOf(me.availability);
-  return head+`<div class="card" style="padding:16px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:13px;font-weight:700">${a.i} ${a.t}</div><div style="font-size:11.5px;color:var(--faint)">${esc(me.city)} · радиус ${me.radius_km} км · от ${money(me.salary_min)}</div></div><button class="btn btn-sm btn-ghost" onclick="openModule('geostatus')">Изменить</button></div>
+  return head+`<div class="card" style="padding:16px"><div style="display:flex;justify-content:space-between;align-items:center"><div style="display:flex;align-items:center;gap:10px">${avatarHtml(me.avatar_url,me.name,40)}<div><div style="font-size:13.5px;font-weight:700">${a.i} ${a.t}</div><div style="font-size:11.5px;color:var(--faint)">${esc(me.city)} · радиус ${me.radius_km} км · от ${money(me.salary_min)}</div></div></div><button class="btn btn-sm btn-ghost" onclick="openModule('geostatus')">Изменить</button></div>
     <div class="kpis" style="margin:12px 0 0"><div class="kpi"><b>${rows.length}</b><span>НАЙДЕНО</span></div><div class="kpi"><b>${avg}%</b><span>СРЕДНЕЕ</span></div><div class="kpi"><b>${rows.filter(r=>r.m.score>=70).length}</b><span>СИЛЬНЫХ</span></div></div></div>
     <div class="card">${rows.map(x=>`<div class="row" onclick="amVacView('${x.v.id}')"><div class="ri">🎯</div><div class="rb"><div class="rt">${esc(x.v.title)}</div><div class="rs">${esc(x.v.company)} · ${esc(x.v.city)}${x.m.dist!=null?' · '+Math.round(x.m.dist)+' км':''} · ${money(x.v.salary)}</div><div class="chips" style="margin:6px 0 0">${x.m.reasons.slice(0,3).map(r=>`<span class="chip" style="padding:2px 7px;font-size:10px">${r}</span>`).join('')}</div></div><div class="rr" style="color:${scoreColor(x.m.score)};font-size:16px">${x.m.score}%</div></div>`).join('')||'<div class="empty">Вакансий не найдено — расширьте радиус или заберите данные из облака</div>'}</div>`;
 }
@@ -377,7 +459,7 @@ function amFindVac(id){return vacancyPool().find(v=>v.id===id)}
 function amSeekerView(sid,vid){
   const s=amFindSeeker(sid),v=amFindVac(vid);if(!s||!v)return;
   const m=matchPair(s,v),a=availOf(s.availability);
-  openDrawer(`<div class="card-title">Совпадение ${m.score}%</div><h3>${esc(s.name)}</h3>
+  openDrawer(`<div class="card-title">Совпадение ${m.score}%</div><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">${avatarHtml(s.avatar_url,s.name,60)}<h3>${esc(s.name)}</h3></div>
     <p style="color:var(--dim);font-size:13px;margin:6px 0 10px">${esc(s.role)} · ${esc(s.city)} · опыт ${s.exp} лет · от ${money(s.salary_min)}</p>
     <span class="pill" style="background:rgba(255,255,255,.1);color:${a.c}">${a.i} ${a.t}</span>
     <div class="card-title" style="margin-top:14px">Почему подходит</div>
@@ -452,13 +534,15 @@ renderHome=function(role){
   if(role==='seeker'){
     const a=availOf(db.profile.availability);
     strip=`<div class="card" style="padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">${avatarHtml(db.profile.avatar_url,db.profile.name,40)}
       <div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:${a.c}">${a.i} ${a.t}</div>
-      <div style="font-size:11.5px;color:var(--faint);margin-top:2px">${esc(db.profile.city)} · радиус ${db.profile.radius_km} км ${cloud}</div></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:2px">${esc(db.profile.city)} · радиус ${db.profile.radius_km} км ${cloud}</div></div></div>
       <button class="btn btn-sm btn-ghost" onclick="amCycle()">Сменить</button></div>`;
   }else{
     strip=`<div class="card" style="padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="display:flex;align-items:center;gap:10px">${avatarHtml(db.company.avatar_url,db.company.name,40)}
       <div style="flex:1"><div style="font-size:13.5px;font-weight:700">📍 ${esc(db.company.city)} · радиус ${db.company.radius_km} км</div>
-      <div style="font-size:11.5px;color:var(--faint);margin-top:2px">${cloud} · в облаке ${(db.cloudSeekers||[]).length} соискателей</div></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:2px">${cloud} · в облаке ${(db.cloudSeekers||[]).length} соискателей</div></div></div>
       <button class="btn btn-sm btn-ghost" onclick="openModule('database')">База</button></div>`;
   }
   el.insertAdjacentHTML('afterbegin',strip);
@@ -471,8 +555,6 @@ function amCycle(){
 
 /* ---------- СТАРТ ---------- */
 sbMigrate();
-// Всегда открываем стартовый экран (Войти / Регистрация).
-// Прошлая сессия не должна перебрасывать сразу в кабинет.
 db.session = null;
 save();
 curMod = null;
