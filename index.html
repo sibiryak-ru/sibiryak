@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#071722">
+<meta name="description" content="Сибиряк — платформа возможностей: работа, кадры, обучение, бизнес.">
+<meta property="og:title" content="Сибиряк — платформа возможностей">
+<meta property="og:description" content="Работа, кадры, обучение и бизнес в одной платформе.">
+<title>Сибиряк — платформа возможностей</title>
+<style>
+/* ФИРМЕННАЯ ПАЛИТРА «СИБИРЯК» v1 — ЗАФИКСИРОВАНА
+   фон #071722 / #0c2433 / #123246 · лёд #3fd2ff · синий #6ea8ff
+   хвоя #2fe08c · янтарь #ffb648 · ИИ #b07bff / #e06bff · опасность #ff5d7e · бирюза #20c9b7 */
+:root{
+  --bg0:#071722; --bg1:#0c2433; --bg2:#123246;
+  --surface:rgba(255,255,255,.055); --surface2:rgba(255,255,255,.10);
+  --line:rgba(148,210,235,.18); --line2:rgba(148,210,235,.32);
+  --ink:#eaf6fb; --dim:#9fc3d4; --faint:#6f93a5;
+  --ice:#3fd2ff; --blue:#6ea8ff; --pine:#2fe08c; --amber:#ffb648;
+  --violet:#b07bff; --magenta:#e06bff; --rose:#ff5d7e; --teal:#20c9b7;
+  --r:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scrollbar-color:var(--ice) var(--bg0);scrollbar-width:thin}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:var(--bg0)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--ice),var(--blue));border-radius:8px;border:2px solid var(--bg0)}
+::-webkit-scrollbar-thumb:hover{background:var(--ice)}
+body{font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;background:var(--bg0);color:var(--ink);min-height:100vh;overflow-x:hidden}
+.aurora{position:fixed;inset:0;z-index:-2;background:radial-gradient(120% 90% at 50% -10%,var(--bg2) 0%,var(--bg1) 45%,var(--bg0) 100%)}
+.blob{position:fixed;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.32;pointer-events:none}
+.blob.b1{width:340px;height:340px;left:-120px;top:-80px;background:radial-gradient(circle,var(--teal),transparent 70%);animation:drift1 22s ease-in-out infinite alternate}
+.blob.b2{width:300px;height:300px;right:-110px;top:30%;background:radial-gradient(circle,var(--violet),transparent 70%);animation:drift2 26s ease-in-out infinite alternate}
+.blob.b3{width:280px;height:280px;left:20%;bottom:-120px;background:radial-gradient(circle,var(--blue),transparent 70%);animation:drift1 30s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(60px,50px) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-50px,-60px) scale(.9)}}
+.shell{max-width:560px;margin:0 auto;padding:16px 16px 90px}
+.screen{display:none;animation:enter .35s cubic-bezier(.2,.8,.2,1)}
+.screen.on{display:block}
+@keyframes enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.logo{text-align:center;margin:34px 0 26px}
+.logo h1{font-size:38px;font-weight:800;letter-spacing:4px;background:linear-gradient(90deg,var(--ice),var(--teal) 55%,var(--pine));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo p{font-size:13px;color:var(--dim);margin-top:6px;letter-spacing:1px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px;backdrop-filter:blur(8px)}
+.card-title{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--faint);margin:0 0 12px 2px}
+.btn{display:block;width:100%;padding:15px 16px;margin-bottom:10px;border:1.5px solid var(--line2);border-radius:14px;background:var(--surface);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;transition:transform .12s,background .2s,border-color .2s;text-align:left;font-family:inherit}
+.btn:active{transform:scale(.98);background:var(--surface2)}
+.btn .sub{display:block;font-size:12px;font-weight:400;color:var(--dim);margin-top:3px}
+.btn-primary{background:linear-gradient(120deg,var(--ice),var(--blue));border-color:transparent;color:#06202e;text-align:center}
+.btn-primary .sub{color:#0b3346}
+.btn-primary:active{opacity:.9}
+.btn-ai{background:linear-gradient(120deg,var(--violet),var(--magenta));border-color:transparent;color:#fff;text-align:center}
+.btn-danger{border-color:rgba(255,93,126,.5);color:var(--rose);text-align:center}
+.btn-ghost{background:transparent;text-align:center;color:var(--dim)}
+.btn-sm{padding:9px 12px;font-size:13px;width:auto;display:inline-block;margin:0}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.input,select.input,textarea.input{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:rgba(7,23,34,.55);color:var(--ink);font-size:15px;margin-bottom:10px;font-family:inherit;outline:none;transition:border-color .2s}
+.input:focus{border-color:var(--ice)}
+.input::placeholder{color:var(--faint)}
+textarea.input{min-height:88px;resize:vertical}
+label.lbl{display:block;font-size:12px;color:var(--dim);margin:2px 0 6px 2px}
+.back-btn{display:block;width:100%;padding:12px;border:none;border-radius:12px;background:var(--surface);color:var(--dim);font-size:14px;cursor:pointer;margin-top:6px;font-family:inherit}
+.divider{text-align:center;margin:14px 0;color:var(--faint);font-size:12px;letter-spacing:2px}
+.hidden{display:none!important}
+.footer{text-align:center;margin-top:26px;font-size:11px;color:var(--faint);letter-spacing:1px}
+#appbar{position:sticky;top:0;z-index:40;display:none;align-items:center;gap:10px;padding:12px 16px;background:rgba(7,23,34,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+#appbar.on{display:flex}
+#appbar .ab-back{border:1px solid var(--line2);background:var(--surface);color:var(--ink);width:38px;height:38px;border-radius:12px;font-size:17px;cursor:pointer;flex:none}
+#appbar .ab-title{flex:1;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#appbar .ab-role{font-size:11px;color:var(--dim);border:1px solid var(--line);padding:5px 10px;border-radius:20px;flex:none}
+#appbar .ab-share{border:1px solid var(--line2);background:var(--surface);color:var(--ice);width:38px;height:38px;border-radius:12px;font-size:16px;cursor:pointer;flex:none}
+#appbar .ab-out{border:none;background:none;color:var(--rose);font-size:18px;cursor:pointer;flex:none}
+.phead{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.avatar{width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--bg2),var(--bg1));border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:28px;flex:none}
+.phead .pname{font-size:18px;font-weight:700}
+.phead .prole{font-size:12px;color:var(--dim);margin-top:3px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 10px;text-align:center}
+.kpi b{display:block;font-size:19px;background:linear-gradient(90deg,var(--ice),var(--pine));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kpi span{font-size:10.5px;color:var(--faint);letter-spacing:.4px}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.mcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:transform .12s,border-color .2s;animation:enter .4s both}
+.mcard:active{transform:scale(.97);border-color:var(--ice)}
+.mcard .mi{font-size:24px}
+.mcard .mt{font-size:13.5px;font-weight:700;margin-top:8px;line-height:1.25}
+.mcard .ms{font-size:11px;color:var(--faint);margin-top:4px;line-height:1.35}
+.mcard .badge{position:absolute;top:10px;right:10px;background:linear-gradient(120deg,var(--ice),var(--blue));color:#06202e;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:12px}
+.mcard.ai{border-color:rgba(176,123,255,.45);background:linear-gradient(150deg,rgba(176,123,255,.14),rgba(224,107,255,.07))}
+.row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.row:last-child{border-bottom:none}
+.row .ri{font-size:22px;flex:none}
+.row .rb{flex:1;min-width:0}
+.row .rt{font-size:14px;font-weight:600}
+.row .rs{font-size:12px;color:var(--dim);margin-top:2px}
+.row .rr{text-align:right;flex:none;font-size:13px;font-weight:700}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:12px;letter-spacing:.3px}
+.p-info{background:rgba(110,168,255,.16);color:var(--blue)}
+.p-ok{background:rgba(47,224,140,.15);color:var(--pine)}
+.p-warn{background:rgba(255,182,72,.16);color:var(--amber)}
+.p-bad{background:rgba(255,93,126,.16);color:var(--rose)}
+.p-dim{background:var(--surface2);color:var(--dim)}
+.p-ai{background:rgba(176,123,255,.18);color:var(--violet)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line2);background:transparent;color:var(--dim);font-size:12px;padding:7px 12px;border-radius:20px;cursor:pointer;font-family:inherit}
+.chip.on{background:linear-gradient(120deg,var(--ice),var(--blue));color:#06202e;border-color:transparent;font-weight:700}
+.empty{text-align:center;color:var(--faint);font-size:13px;padding:26px 10px}
+.bar-track{height:8px;border-radius:6px;background:var(--surface2);overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--ice),var(--blue));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.chart{display:flex;align-items:flex-end;gap:8px;height:130px;padding:6px 2px 0}
+.chart .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;height:100%}
+.chart .seg{border-radius:4px 4px 2px 2px;min-height:2px;animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleY(0);transform-origin:bottom}}
+.chart .cl{font-size:9.5px;color:var(--faint);text-align:center;margin-top:6px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--dim)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+.stars{color:var(--amber);font-size:17px;letter-spacing:2px}
+.stars .off{color:var(--surface2)}
+#scrim{position:fixed;inset:0;background:rgba(4,12,18,.66);backdrop-filter:blur(3px);z-index:60;display:none;animation:fade .2s}
+#scrim.on{display:block}
+@keyframes fade{from{opacity:0}}
+#drawer{position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:560px;margin:0 auto;background:linear-gradient(180deg,var(--bg2),var(--bg1));border:1px solid var(--line2);border-bottom:none;border-radius:22px 22px 0 0;max-height:84vh;overflow-y:auto;padding:20px 18px 30px;display:none;animation:up .3s cubic-bezier(.2,.8,.2,1)}
+#drawer.on{display:block}
+@keyframes up{from{transform:translateY(60px);opacity:0}}
+#drawer .grab{width:44px;height:4px;border-radius:4px;background:var(--line2);margin:0 auto 16px}
+#modal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+#modal .mbox{width:100%;max-width:440px;max-height:84vh;overflow-y:auto;background:linear-gradient(180deg,var(--bg2),var(--bg1));border:1px solid var(--line2);border-radius:20px;padding:22px;animation:pop .25s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);z-index:90;background:var(--bg2);border:1px solid var(--line2);color:var(--ink);padding:12px 16px;border-radius:14px;font-size:13px;display:flex;gap:14px;align-items:center;opacity:0;transition:.3s;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+#toast button{border:none;background:linear-gradient(120deg,var(--ice),var(--blue));color:#06202e;font-weight:800;font-size:12px;padding:7px 12px;border-radius:10px;cursor:pointer}
+.demo-note{border:1px dashed rgba(255,182,72,.5);background:rgba(255,182,72,.08);border-radius:12px;padding:12px;font-size:12.5px;color:var(--amber);margin-bottom:12px;line-height:1.5}
+.err{color:var(--rose);font-size:12.5px;margin:-4px 0 10px 2px;min-height:16px}
+.msg{max-width:80%;padding:10px 13px;border-radius:14px;font-size:13.5px;margin-bottom:8px;line-height:1.45}
+.msg.them{background:var(--surface2);border:1px solid var(--line)}
+.msg.me{background:linear-gradient(120deg,rgba(63,210,255,.22),rgba(110,168,255,.22));border:1px solid rgba(63,210,255,.35);margin-left:auto}
+.msg .mt{font-size:10px;color:var(--faint);margin-top:4px}
+.chatbox{display:flex;gap:8px;margin-top:12px}
+.chatbox .input{margin:0}
+.step{display:flex;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);align-items:flex-start}
+.step input{width:20px;height:20px;accent-color:var(--pine);margin-top:2px;flex:none}
+.step .st{font-size:14px;font-weight:600}
+.step .ss{font-size:12px;color:var(--dim);margin-top:3px;line-height:1.5}
+.step.done .st{text-decoration:line-through;color:var(--faint)}
+.tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px}
+.tabs button{flex:1;border:none;background:transparent;color:var(--dim);font-size:12.5px;font-weight:600;padding:9px 4px;border-radius:10px;cursor:pointer;font-family:inherit}
+.tabs button.on{background:linear-gradient(120deg,var(--ice),var(--blue));color:#06202e}
+.toggle{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.sw{width:46px;height:26px;border-radius:20px;background:var(--surface2);border:1px solid var(--line2);position:relative;cursor:pointer;transition:.2s;flex:none}
+.sw::after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:var(--dim);top:2px;left:2px;transition:.2s}
+.sw.on{background:linear-gradient(120deg,var(--pine),var(--teal));border-color:transparent}
+.sw.on::after{left:22px;background:#fff}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="aurora"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<header id="appbar">
+  <button class="ab-back" onclick="appBack()">←</button>
+  <div class="ab-title" id="ab-title">Сибиряк</div>
+  <span class="ab-role" id="ab-role"></span>
+  <button class="ab-share" onclick="openShare()" title="Показать друзьям">📤</button>
+  <button class="ab-out" onclick="logout()" title="Выйти">⏻</button>
+</header>
+
+<div class="shell">
+
+<div class="screen on" id="s-main">
+  <div class="logo"><h1>СИБИРЯК</h1><p>ПЛАТФОРМА ВОЗМОЖНОСТЕЙ</p></div>
+  <div class="card">
+    <button class="btn btn-primary" onclick="go('s-login')">🔑 Войти</button>
+    <button class="btn" onclick="go('s-method')" style="text-align:center">📝 Регистрация</button>
+    <button class="btn btn-ghost" onclick="openShare()">📤 Показать друзьям</button>
+  </div>
+  <div class="footer">MVP v0.3 · Сибиряк · Барнаул</div>
+</div>
+
+<div class="screen" id="s-method">
+  <div class="logo"><h1>СИБИРЯК</h1><p>Выберите способ регистрации</p></div>
+  <div class="card">
+    <button class="btn" style="background:linear-gradient(120deg,#0d4cd3,#2f7bff);border-color:transparent;text-align:center" onclick="go('s-esia')">🔐 Через Госуслуги<span class="sub" style="color:#cfe0ff">Подтверждённый аккаунт ЕСИА</span></button>
+    <div class="divider">— ИЛИ —</div>
+    <button class="btn" style="text-align:center" onclick="go('s-phone')">📱 По номеру телефона<span class="sub">Код подтверждения в демо-режиме</span></button>
+  </div>
+  <button class="back-btn" onclick="go('s-main')">← Назад</button>
+</div>
+
+<div class="screen" id="s-esia">
+  <div class="logo"><h1>СИБИРЯК</h1><p>Вход через Госуслуги</p></div>
+  <div class="card">
+    <div class="demo-note">Интеграция с ЕСИА подключается после запуска платформы: требуется юрлицо, регистрация системы в ЕСИА и согласование сценария с Минцифры. Сейчас кнопка работает в режиме демонстрации.</div>
+    <button class="btn btn-primary" onclick="toast('Демо: переход на Госуслуги будет доступен после подключения ЕСИА')">🔐 Продолжить через Госуслуги</button>
+    <button class="btn btn-ghost" onclick="go('s-phone')">Зарегистрироваться по телефону →</button>
+  </div>
+  <button class="back-btn" onclick="go('s-method')">← Назад</button>
+</div>
+
+<div class="screen" id="s-phone">
+  <div class="logo"><h1>СИБИРЯК</h1><p>Регистрация по номеру телефона</p></div>
+  <div class="card">
+    <label class="lbl">Номер телефона</label>
+    <input class="input" type="tel" id="phone" placeholder="+7 (___) ___-__-__">
+    <div class="err" id="phone-err"></div>
+    <button class="btn btn-primary" id="send-code-btn" onclick="sendCode()">📩 Получить код</button>
+    <div id="code-block" class="hidden">
+      <div class="demo-note" id="demo-code-hint"></div>
+      <label class="lbl">Код из SMS</label>
+      <input class="input" type="text" id="code" inputmode="numeric" maxlength="4" placeholder="4 цифры">
+      <div class="err" id="code-err"></div>
+      <button class="btn btn-primary" onclick="verifyCode()">✅ Подтвердить</button>
+      <button class="btn btn-ghost" onclick="sendCode()">Отправить код повторно</button>
+    </div>
+  </div>
+  <button class="back-btn" onclick="go('s-method')">← Назад</button>
+</div>
+
+<div class="screen" id="s-role">
+  <div class="logo"><h1>СИБИРЯК</h1><p>Кто вы?</p></div>
+  <div class="card">
+    <button class="btn" onclick="selectRole('seeker')">👤 Соискатель<span class="sub">Физлицо — ищу работу или подработку</span></button>
+    <button class="btn" onclick="selectRole('company')">🏢 Юр. лицо<span class="sub">Организация — ищу сотрудников</span></button>
+    <button class="btn" onclick="selectRole('company')">🧑‍💼 ИП<span class="sub">Индивидуальный предприниматель</span></button>
+    <button class="btn" onclick="selectRole('company')">🎯 Самозанятый<span class="sub">Работаю на себя, плачу НПД</span></button>
+  </div>
+</div>
+
+<div class="screen" id="s-login">
+  <div class="logo"><h1>СИБИРЯК</h1><p>Вход в аккаунт</p></div>
+  <div class="card">
+    <label class="lbl">Email</label>
+    <input class="input" type="email" id="login-email" placeholder="you@mail.ru">
+    <label class="lbl">Пароль</label>
+    <input class="input" type="password" id="login-pass" placeholder="••••••••">
+    <div class="err" id="login-err"></div>
+    <button class="btn btn-primary" onclick="doLogin()">Войти</button>
+    <div class="demo-note">Демо-доступ: <b>demo@sibiryak.ru</b> / <b>demo1234</b></div>
+  </div>
+  <button class="back-btn" onclick="go('s-main')">← Назад</button>
+</div>
+
+<div class="screen" id="s-seeker"><div id="seeker-home"></div></div>
+<div class="screen" id="s-company"><div id="company-home"></div></div>
+<div class="screen" id="s-module"><div id="module-body"></div></div>
+
+</div>
+
+<div id="scrim" onclick="closeLayers()"></div>
+<div id="drawer"><div class="grab"></div><div id="drawer-body"></div></div>
+<div id="modal"><div class="mbox" id="modal-body"></div></div>
+<div id="toast"><span id="toast-text"></span><button id="toast-undo" class="hidden">Вернуть</button></div>
+
+<script>
+/* ================= ДАННЫЕ ================= */
+const KEY='sibiryak_db_v2';
+let db, curMod=null, demoCode=null, toastTimer=null, modState={};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10)};
+const fdate=s=>new Date(s).toLocaleDateString('ru-RU',{day:'numeric',month:'short'});
+const val=id=>document.getElementById(id).value.trim();
+
+function seed(){
+  const incomes=[];
+  for(let d=9;d>=0;d--){
+    incomes.push({id:uid(),date:dAgo(d),cat:'Смена',amount:2400+Math.round(Math.random()*120)*10,note:'Такси, тариф Эконом'});
+    if(Math.random()>.35)incomes.push({id:uid(),date:dAgo(d),cat:'Чаевые',amount:120+Math.round(Math.random()*48)*10,note:'От пассажиров'});
+    if(d%4===0)incomes.push({id:uid(),date:dAgo(d),cat:'Подработка',amount:1500,note:'Перегон авто'});
+  }
+  return {
+    session:null,
+    account:{email:'demo@sibiryak.ru',password:'demo1234'},
+    profile:{name:'Николай Смирнов',city:'Барнаул',phone:'',verified:false,role:'seeker',notif:{sms:true,push:true,email:false}},
+    company:{name:'ООО «Алтай Логистика»',inn:'2221000000',city:'Барнаул'},
+    resumes:[{id:uid(),title:'Водитель / курьер',exp:6,skills:'Вождение, логистика, ответственность',about:'Опыт вождения более 6 лет. Знаю город и край, аккуратен, пунктуален. Готов к сменному графику и разъездной работе.',city:'Барнаул'}],
+    applications:[
+      {id:uid(),vacancy:'Водитель-экспедитор',company:'ООО «Алтай Логистика»',salary:75000,status:'Приглашение',date:dAgo(2)},
+      {id:uid(),vacancy:'Курьер на авто',company:'СДЭК',salary:60000,status:'Отклик',date:dAgo(4)},
+      {id:uid(),vacancy:'Водитель категории C',company:'ТК «Энергия»',salary:90000,status:'Отказ',date:dAgo(7)},
+      {id:uid(),vacancy:'Персональный водитель',company:'Частное лицо',salary:55000,status:'Отклик',date:dAgo(1)}],
+    jobs:[
+      {id:uid(),title:'Водитель погрузчика',company:'Склад «Южный»',salary:65000,city:'Барнаул',tags:['Сменный график','Обучение']},
+      {id:uid(),title:'Менеджер по логистике',company:'ООО «Алтай Логистика»',salary:70000,city:'Барнаул',tags:['Офис','5/2']},
+      {id:uid(),title:'Автомеханик',company:'СТО «Мотор»',salary:80000,city:'Барнаул',tags:['Гараж','Сдельно']},
+      {id:uid(),title:'Оператор линии',company:'Завод «Алтай»',salary:58000,city:'Новоалтайск',tags:['Вахта','Жильё']}],
+    incomes,
+    reviews:[
+      {id:uid(),author:'ООО «Алтай Логистика»',stars:5,text:'Ответственный водитель, рейсы закрывал вовремя.',date:dAgo(12)},
+      {id:uid(),author:'СТО «Мотор»',stars:4,text:'Хорошо разбирается в технике, аккуратен.',date:dAgo(30)},
+      {id:uid(),author:'Частный заказчик',stars:5,text:'Пунктуальный, вежливый. Рекомендую.',date:dAgo(45)}],
+    courses:{
+      prof:[
+        {id:uid(),title:'Водитель погрузчика',org:'ЦЗН Барнаул',hours:160,price:0},
+        {id:uid(),title:'Сварщик НАКС',org:'УЦ «Профи»',hours:240,price:18000},
+        {id:uid(),title:'Оператор ЧПУ',org:'УЦ «Техно»',hours:200,price:15000},
+        {id:uid(),title:'Электромонтажник',org:'ЦЗН Алтайского края',hours:180,price:0}],
+      qual:[
+        {id:uid(),title:'Категория C → CE',org:'Автошкола «Драйв»',hours:80,price:12000},
+        {id:uid(),title:'Охрана труда',org:'УЦ «Профи»',hours:40,price:2500},
+        {id:uid(),title:'Excel для работы',org:'Онлайн',hours:24,price:0},
+        {id:uid(),title:'Первая помощь',org:'Красный Крест',hours:16,price:0}]},
+    enrollments:[],
+    legal:[{id:uid(),topic:'Трудовое право',text:'Задержка зарплаты на предыдущем месте.',status:'Ответ получен',date:dAgo(6),answer:'По ст. 236 ТК РФ работодатель обязан выплатить компенсацию за задержку. Подайте письменную претензию, затем жалобу в ГИТ или иск в суд.'}],
+    business:[
+      {id:uid(),t:'Идея и ниша',s:'Опишите услугу, которую готовы оказывать: ремонт авто, перевозки, подработка.',done:true},
+      {id:uid(),t:'Проверка спроса',s:'Опросите 10 потенциальных клиентов, посмотрите конкурентов в городе.',done:false},
+      {id:uid(),t:'Регистрация',s:'Самозанятость — через «Мой налог» за 10 минут. ИП — через Госуслуги.',done:false},
+      {id:uid(),t:'Первый клиент',s:'Разместите объявление в Сибиряке и местных чатах.',done:false},
+      {id:uid(),t:'Учёт и налоги',s:'Фиксируйте доход, формируйте чеки, откладывайте налог.',done:false}],
+    candidates:[
+      {id:uid(),name:'Андрей Ковалёв',role:'Водитель-экспедитор',skills:['Вождение','Логистика','Категория C'],exp:8,rating:4.8,status:'Новый',city:'Барнаул'},
+      {id:uid(),name:'Марина Соколова',role:'Менеджер по логистике',skills:['1С','Excel','Документооборот'],exp:5,rating:4.6,status:'В резерве',city:'Барнаул'},
+      {id:uid(),name:'Игорь Мельник',role:'Автомеханик',skills:['Диагностика','Ремонт ДВС','Электрика'],exp:10,rating:4.9,status:'Приглашён',city:'Новоалтайск'},
+      {id:uid(),name:'Ольга Крамер',role:'Диспетчер',skills:['1С','Коммуникации','Маршруты'],exp:3,rating:4.3,status:'Новый',city:'Барнаул'},
+      {id:uid(),name:'Сергей Батурин',role:'Водитель погрузчика',skills:['Погрузчик','Склад','Категория B'],exp:4,rating:4.5,status:'Новый',city:'Барнаул'},
+      {id:uid(),name:'Павел Штерн',role:'Курьер на авто',skills:['Вождение','Навигация','Пунктуальность'],exp:2,rating:4.2,status:'Нанят',city:'Барнаул'}],
+    vacancies:[
+      {id:uid(),title:'Водитель-экспедитор',count:2,salary:75000,skills:'Вождение, Категория C, Логистика',desc:'Доставка грузов по Барнаулу и краю. Сменный график, официальное оформление.',status:'Открыта'},
+      {id:uid(),title:'Менеджер по логистике',count:1,salary:70000,skills:'1С, Excel, Документооборот',desc:'Координация рейсов, работа с документами и клиентами.',status:'Открыта'},
+      {id:uid(),title:'Автомеханик',count:1,salary:80000,skills:'Диагностика, Ремонт ДВС',desc:'Ремонт и обслуживание коммерческого транспорта.',status:'Закрыта'}],
+    interviews:[
+      {id:uid(),candidate:'Игорь Мельник',vacancy:'Автомеханик',dt:dAgo(-1)+'T10:00',status:'Запланировано'},
+      {id:uid(),candidate:'Марина Соколова',vacancy:'Менеджер по логистике',dt:dAgo(3)+'T14:30',status:'Проведено'}],
+    staff:[
+      {id:uid(),name:'Павел Штерн',position:'Курьер на авто',salary:55000,hired:dAgo(20)},
+      {id:uid(),name:'Дмитрий Лапин',position:'Водитель-экспедитор',salary:75000,hired:dAgo(120)},
+      {id:uid(),name:'Анна Вебер',position:'Диспетчер',salary:45000,hired:dAgo(200)}],
+    documents:[
+      {id:uid(),kind:'Договор',type:'Трудовой',person:'Дмитрий Лапин',no:'Д-2026-011',date:dAgo(120),status:'Подписан'},
+      {id:uid(),kind:'Договор',type:'Трудовой',person:'Павел Штерн',no:'Д-2026-018',date:dAgo(20),status:'Подписан'},
+      {id:uid(),kind:'Договор',type:'ГПХ',person:'Игорь Мельник',no:'Д-2026-021',date:dAgo(2),status:'На подписи'},
+      {id:uid(),kind:'Акт',type:'Выполненных работ',person:'СТО «Мотор»',no:'А-2026-007',date:dAgo(5),status:'Черновик'}],
+    payroll:[
+      {id:uid(),name:'Павел Штерн',salary:55000,bonus:3000,paid:true},
+      {id:uid(),name:'Дмитрий Лапин',salary:75000,bonus:5000,paid:false},
+      {id:uid(),name:'Анна Вебер',salary:45000,bonus:0,paid:false}],
+    threads:[
+      {id:uid(),name:'Андрей Ковалёв',role:'Кандидат · Водитель',unread:2,msgs:[
+        {from:'them',text:'Здравствуйте! Актуальна ли вакансия водителя-экспедитора?',time:'09:12'},
+        {from:'them',text:'Готов приехать на собеседование в любой день.',time:'09:13'}]},
+      {id:uid(),name:'Марина Соколова',role:'Кандидат · Логистика',unread:0,msgs:[
+        {from:'me',text:'Марина, спасибо за собеседование. Вернёмся с решением до пятницы.',time:'15:40'},
+        {from:'them',text:'Спасибо, буду ждать!',time:'15:52'}]},
+      {id:uid(),name:'Игорь Мельник',role:'Кандидат · Механик',unread:1,msgs:[
+        {from:'them',text:'Подтверждаю собеседование завтра в 10:00.',time:'18:05'}]}],
+    notes:[
+      {id:uid(),title:'Ковалёв — сильные стороны',text:'8 лет без аварий, знает край. Просит график 2/2.',date:dAgo(1)},
+      {id:uid(),title:'Кадровый резерв',text:'На зиму нужен второй механик. Смотреть Мельника и Батурина.',date:dAgo(4)}],
+    integrations:{ones:{on:false,sync:null},bitrix:{on:false,sync:null},esia:{on:false,sync:null},tg:{on:true,sync:dAgo(1)}},
+    savedViews:[]
+  };
+}
+function load(){try{db=JSON.parse(localStorage.getItem(KEY))||seed()}catch(e){db=seed()}save()}
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+
+/* ================= НАВИГАЦИЯ ================= */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  const cab=['s-seeker','s-company','s-module'].includes(id);
+  document.getElementById('appbar').classList.toggle('on',cab);
+  document.querySelector('.ab-back').style.visibility=id==='s-module'?'visible':'hidden';
+  if(id==='s-seeker')renderHome('seeker');
+  if(id==='s-company')renderHome('company');
+  if(cab){document.getElementById('ab-role').textContent=db.profile.role==='company'?'Бизнес':'Соискатель';
+    document.getElementById('ab-title').textContent=id==='s-module'?(modTitle(curMod)||'Сибиряк'):(db.profile.role==='company'?db.company.name:'Кабинет соискателя');}
+}
+function appBack(){if(curMod){curMod=null;go(db.profile.role==='company'?'s-company':'s-seeker')}}
+function openModule(key){curMod=key;modState[key]=modState[key]||{tab:0,q:'',filter:'Все',sort:'date'};go('s-module');renderModule()}
+function modTitle(k){const m=[...MOD.seeker,...MOD.company].flat().find(x=>x.key===k);return m?m.title:'Сибиряк'}
+function rerender(){if(curMod)renderModule();else go(db.profile.role==='company'?'s-company':'s-seeker')}
+
+/* ================= СЛОИ ================= */
+function openDrawer(html){document.getElementById('drawer-body').innerHTML=html;document.getElementById('drawer').classList.add('on');document.getElementById('scrim').classList.add('on')}
+function openModal(html){document.getElementById('modal-body').innerHTML=html;document.getElementById('modal').classList.add('on');document.getElementById('scrim').classList.add('on')}
+function closeLayers(){['drawer','modal','scrim'].forEach(i=>document.getElementById(i).classList.remove('on'))}
+function toast(msg,undo){
+  const t=document.getElementById('toast');document.getElementById('toast-text').textContent=msg;
+  const b=document.getElementById('toast-undo');b.classList.toggle('hidden',!undo);
+  b.onclick=()=>{undo&&undo();t.classList.remove('on')};
+  t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('on'),4200);
+}
+function delItem(coll,id,label){
+  const arr=db[coll],i=arr.findIndex(x=>x.id===id);if(i<0)return;
+  const [item]=arr.splice(i,1);
+  if(coll==='staff')db.payroll=db.payroll.filter(p=>p.name!==item.name);
+  save();closeLayers();rerender();
+  toast(label+' — удалено',()=>{arr.splice(i,0,item);save();rerender()});
+}
+
+/* ================= АВТОРИЗАЦИЯ ================= */
+function sendCode(){
+  const p=val('phone').replace(/\D/g,'');
+  if(p.length<10){document.getElementById('phone-err').textContent='Введите корректный номер (10–11 цифр)';return}
+  document.getElementById('phone-err').textContent='';
+  demoCode=String(1000+Math.floor(Math.random()*9000));
+  document.getElementById('code-block').classList.remove('hidden');
+  document.getElementById('demo-code-hint').innerHTML='Демо-режим: SMS не отправляется. Ваш код: <b style="font-size:16px">'+demoCode+'</b>';
+  document.getElementById('send-code-btn').textContent='📩 Код отправлен';
+}
+function verifyCode(){
+  if(val('code')!==demoCode){document.getElementById('code-err').textContent='Неверный код. Попробуйте ещё раз.';return}
+  db.profile.phone=val('phone');db.profile.verified=true;save();go('s-role');
+}
+function selectRole(role){db.profile.role=role;db.session={role};save();go(role==='company'?'s-company':'s-seeker');toast('Добро пожаловать в Сибиряк!')}
+function doLogin(){
+  const e=val('login-email'),p=val('login-pass');
+  if(e===db.account.email&&p===db.account.password){db.session={role:db.profile.role};save();go(db.profile.role==='company'?'s-company':'s-seeker');toast('Вход выполнен')}
+  else document.getElementById('login-err').textContent='Неверный email или пароль';
+}
+function logout(){db.session=null;save();curMod=null;go('s-main')}
+
+/* ================= ПОДЕЛИТЬСЯ ================= */
+function openShare(){
+  const hosted=/^https?:$/.test(location.protocol)&&!/^(localhost|127\.)/.test(location.hostname);
+  const url=location.origin+location.pathname;
+  let html;
+  if(hosted){
+    html=`<div class="card-title">Ссылка на платформу</div>
+    <div class="demo-note" style="border-color:rgba(47,224,140,.5);background:rgba(47,224,140,.08);color:var(--pine)">Платформа опубликована. Друзья откроют её со своими демо-данными.</div>
+    <div class="input" style="word-break:break-all;font-size:13px">${esc(url)}</div>
+    <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="copyLink('${esc(url)}')">📋 Копировать</button>
+    <button class="btn btn-sm btn-ai" onclick="nativeShare('${esc(url)}')">📤 Поделиться</button></div>
+    <div style="text-align:center;margin-top:16px"><img alt="QR-код ссылки" style="width:200px;height:200px;border-radius:14px;border:1px solid var(--line2)" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" onerror="this.parentNode.style.display='none'"><div style="font-size:11px;color:var(--faint);margin-top:8px">Наведи камеру — и ты в Сибиряке</div></div>`;
+  }else{
+    html=`<div class="card-title">Показать друзьям</div>
+    <div class="demo-note">Сейчас файл открыт локально. Опубликуй его один раз — и получишь постоянную ссылку для друзей.</div>
+    <div style="font-size:13px;color:var(--dim);line-height:1.9">1. github.com → регистрация → New repository «sibiryak» (Public).<br>2. «uploading an existing file» → выбери index.html → Commit changes.<br>3. Settings → Pages → Branch: main → Save.<br>4. Через минуту появится ссылка вида login.github.io/sibiryak — открой её и жми 📤.</div>
+    <button class="btn btn-primary" style="margin-top:12px" onclick="window.open('https://github.com/new','_blank')">🚀 Открыть GitHub</button>`;
+  }
+  openDrawer(html);
+}
+function copyLink(t){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Ссылка скопирована')).catch(()=>toast('Скопируйте ссылку вручную'))}
+function nativeShare(u){if(navigator.share){navigator.share({title:'Сибиряк',text:'Платформа возможностей — посмотри, что я собрал',url:u}).catch(()=>{})}else copyLink(u)}
+
+/* ================= РЕЙТИНГ ================= */
+function ratingData(){
+  const avg=db.reviews.length?db.reviews.reduce((s,r)=>s+r.stars,0)/db.reviews.length:0;
+  const parts=[
+    {label:'Телефон подтверждён',max:20,got:db.profile.verified?20:0,c:'var(--ice)'},
+    {label:'Резюме заполнено',max:30,got:db.resumes.length?30:0,c:'var(--pine)'},
+    {label:'Активность откликов',max:20,got:Math.min(20,db.applications.length*5),c:'var(--amber)'},
+    {label:'Отзывы работодателей',max:30,got:Math.round(avg/5*30),c:'var(--violet)'}];
+  const score=parts.reduce((s,p)=>s+p.got,0);
+  return {parts,score,stars:Math.round(score/20)};
+}
+const starsHtml=n=>'<span class="stars">'+'★'.repeat(n)+'<span class="off">'+'★'.repeat(5-n)+'</span></span>';
+const monthIncome=()=>db.incomes.filter(i=>i.date.slice(0,7)===new Date().toISOString().slice(0,7)).reduce((s,i)=>s+i.amount,0);
+
+/* ================= ГЛАВНЫЕ КАБИНЕТЫ ================= */
+const MOD={
+ seeker:[
+  {g:'Работа',items:[
+    {key:'resume',icon:'📄',title:'Составить резюме',sub:'Конструктор + демо-ИИ',badge:()=>db.resumes.length},
+    {key:'apps',icon:'📨',title:'Мои заявки',sub:'Отклики и приглашения',badge:()=>db.applications.filter(a=>a.status!=='Отказ').length},
+    {key:'jobs',icon:'⭐',title:'Мои вакансии',sub:'Сохранённые вакансии',badge:()=>db.jobs.length}]},
+  {g:'Финансы и репутация',items:[
+    {key:'finance',icon:'💰',title:'Мои финансы',sub:'Доходы, чаевые, смены',badge:()=>null},
+    {key:'rating',icon:'🏆',title:'Рейтинг',sub:'Очки и отзывы',badge:()=>ratingData().score}]},
+  {g:'Возможности',items:[
+    {key:'courses',icon:'🎓',title:'Получить профессию',sub:'Обучение с трудоустройством',badge:()=>null},
+    {key:'courses',icon:'📈',title:'Повысить квалификацию',sub:'Курсы и сертификаты',badge:()=>null,tab:1},
+    {key:'legal',icon:'⚖️',title:'Юридическая консультация',sub:'Первичный ответ — мгновенно',badge:()=>db.legal.length},
+    {key:'business',icon:'🚀',title:'Создать бизнес',sub:'Пошаговый план запуска',badge:()=>null}]},
+  {g:'Сервис',items:[{key:'settings',icon:'⚙️',title:'Настройки',sub:'Профиль и уведомления',badge:()=>null}]}],
+ company:[
+  {g:'Подбор персонала',items:[
+    {key:'candidates',icon:'🔍',title:'Подбор соискателей',sub:'База кандидатов',badge:()=>db.candidates.length},
+    {key:'needs',icon:'📊',title:'Потребность',sub:'Заявки на найм',badge:()=>db.vacancies.filter(v=>v.status==='Открыта').length},
+    {key:'interviews',icon:'📅',title:'Собеседования',sub:'Расписание и статусы',badge:()=>db.interviews.filter(i=>i.status==='Запланировано').length}]},
+  {g:'Управление',items:[
+    {key:'staff',icon:'👔',title:'Управление кадрами',sub:'Сотрудники и должности',badge:()=>db.staff.length},
+    {key:'reports',icon:'📈',title:'Отчётность',sub:'Воронка и аналитика',badge:()=>null}]},
+  {g:'Документы и финансы',items:[
+    {key:'docs',icon:'📄',title:'Документооборот',sub:'Договоры, акты, шаблоны',badge:()=>db.documents.length},
+    {key:'money',icon:'💰',title:'Финансы',sub:'Зарплаты и налоги',badge:()=>db.payroll.filter(p=>!p.paid).length}]},
+  {g:'Коммуникации',items:[
+    {key:'messages',icon:'✉️',title:'Сообщения',sub:'Чаты с кандидатами',badge:()=>db.threads.reduce((s,t)=>s+t.unread,0)},
+    {key:'notes',icon:'📝',title:'Заметки',sub:'Пометки о кандидатах',badge:()=>db.notes.length}]},
+  {g:'Развитие',items:[
+    {key:'integrations',icon:'🔗',title:'Интеграции',sub:'1С, Битрикс24, ЕСИА',badge:()=>null},
+    {key:'ai',icon:'🤖',title:'AI-помощник',sub:'Вакансии и отбор резюме',badge:()=>null,ai:true}]},
+  {g:'Сервис',items:[{key:'cprofile',icon:'🏢',title:'Профиль компании',sub:'Реквизиты и настройки',badge:()=>null}]}]
+};
+function renderHome(role){
+  const r=ratingData();
+  const head=role==='seeker'
+    ?`<div class="phead"><div class="avatar">👤</div><div><div class="pname">${esc(db.profile.name)}</div><div class="prole">Соискатель · ${esc(db.profile.city)} ${db.profile.verified?'· ✓ подтверждён':''}</div></div></div>
+      <div class="kpis"><div class="kpi"><b>${r.score}</b><span>РЕЙТИНГ</span></div><div class="kpi"><b>${money(monthIncome()).replace(' ₽','')}</b><span>ДОХОД / МЕС, ₽</span></div><div class="kpi"><b>${db.applications.filter(a=>a.status!=='Отказ').length}</b><span>АКТИВНЫЕ ОТКЛИКИ</span></div></div>`
+    :`<div class="phead"><div class="avatar">🏢</div><div><div class="pname">${esc(db.company.name)}</div><div class="prole">ИНН ${esc(db.company.inn)} · ${esc(db.company.city)}</div></div></div>
+      <div class="kpis"><div class="kpi"><b>${db.vacancies.filter(v=>v.status==='Открыта').length}</b><span>ОТКРЫТЫЕ ВАКАНСИИ</span></div><div class="kpi"><b>${db.candidates.length}</b><span>КАНДИДАТЫ</span></div><div class="kpi"><b>${db.interviews.filter(i=>i.status==='Запланировано').length}</b><span>СОБЕСЕДОВАНИЯ</span></div></div>`;
+  let html=head;
+  MOD[role].forEach((g,gi)=>{
+    html+=`<div class="card-title">${g.g}</div><div class="mgrid">`;
+    g.items.forEach((m,i)=>{
+      const b=m.badge();
+      html+=`<div class="mcard ${m.ai?'ai':''}" style="animation-delay:${(gi*3+i)*40}ms" onclick="openModuleTab('${m.key}',${m.tab||0})">
+        ${b?`<span class="badge">${b}</span>`:''}<div class="mi">${m.icon}</div><div class="mt">${m.title}</div><div class="ms">${m.sub}</div></div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById(role==='seeker'?'seeker-home':'company-home').innerHTML=html;
+}
+function openModuleTab(key,tab){openModule(key);modState[key].tab=tab;renderModule()}
+
+/* ================= МОДУЛИ ================= */
+function renderModule(){
+  const st=modState[curMod];
+  const R={resume:mResume,apps:mApps,jobs:mJobs,finance:mFinance,rating:mRating,courses:mCourses,legal:mLegal,business:mBusiness,settings:mSettings,
+    candidates:mCandidates,needs:mNeeds,interviews:mInterviews,staff:mStaff,reports:mReports,docs:mDocs,money:mMoney,messages:mMessages,notes:mNotes,integrations:mIntegrations,ai:mAI,cprofile:mCProfile};
+  document.getElementById('module-body').innerHTML=(R[curMod]||(()=>'<div class="empty">Раздел в разработке</div>'))(st);
+  document.getElementById('ab-title').textContent=modTitle(curMod);
+}
+const pill=s=>({'Отклик':'p-info','Приглашение':'p-warn','Принят':'p-ok','Отказ':'p-bad','Новый':'p-info','В резерве':'p-dim','Приглашён':'p-warn','Нанят':'p-ok','Открыта':'p-ok','Закрыта':'p-dim','Запланировано':'p-warn','Проведено':'p-ok','Отменено':'p-bad','Черновик':'p-dim','На подписи':'p-warn','Подписан':'p-ok','В очереди':'p-warn','Ответ получен':'p-ok'}[s]||'p-dim');
+const tabs=(st,arr)=>`<div class="tabs">${arr.map((t,i)=>`<button class="${st.tab===i?'on':''}" onclick="modState['${curMod}'].tab=${i};renderModule()">${t}</button>`).join('')}</div>`;
+const searchBox=st=>`<input class="input" id="mod-search" placeholder="🔍 Поиск…" value="${esc(st.q)}" oninput="onSearch(this.value)">`;
+function onSearch(v){modState[curMod].q=v;renderModule();const el=document.getElementById('mod-search');if(el){el.focus();try{el.setSelectionRange(el.value.length,el.value.length)}catch(e){}}}
+
+/* ---- СОИСКАТЕЛЬ ---- */
+function mResume(st){
+  const list=db.resumes.map(r=>`<div class="row" onclick="resumeView('${r.id}')"><div class="ri">📄</div><div class="rb"><div class="rt">${esc(r.title)}</div><div class="rs">Опыт ${r.exp} лет · ${esc(r.city)}</div></div><div class="rr">›</div></div>`).join('')||'<div class="empty">Резюме пока нет — создайте первое</div>';
+  return `<div class="card"><div class="card-title">Мои резюме</div>${list}</div>
+  <div class="card"><div class="card-title">Новое резюме</div>
+    <label class="lbl">Должность</label><input class="input" id="r-title" placeholder="Например: Водитель-экспедитор">
+    <label class="lbl">Город</label><input class="input" id="r-city" value="${esc(db.profile.city)}">
+    <label class="lbl">Опыт (лет)</label><input class="input" id="r-exp" type="number" value="3">
+    <label class="lbl">Ключевые навыки (через запятую)</label><input class="input" id="r-skills" placeholder="Вождение, логистика, 1С">
+    <label class="lbl">О себе</label><textarea class="input" id="r-about" placeholder="Коротко о вашем опыте и сильных сторонах"></textarea>
+    <button class="btn btn-ai" onclick="aiAbout()">✨ Собрать «о себе» с демо-ИИ</button>
+    <button class="btn btn-primary" onclick="saveResume()">💾 Сохранить резюме</button>
+  </div>`;
+}
+function aiAbout(){
+  const t=val('r-title')||'специалист',e=val('r-exp')||'3',s=val('r-skills');
+  document.getElementById('r-about').value=`Опыт работы — ${e} лет. Ключевые компетенции: ${s||'ответственность, обучаемость, работа в команде'}. Ищу позицию «${t}»: готов к сменному графику, нацелен на долгосрочное сотрудничество и результат.`;
+  toast('Демо-ИИ собрал текст — отредактируйте под себя');
+}
+function saveResume(){
+  const t=val('r-title');if(!t){toast('Укажите должность');return}
+  db.resumes.push({id:uid(),title:t,city:val('r-city'),exp:+val('r-exp')||0,skills:val('r-skills'),about:val('r-about')});
+  save();rerender();toast('Резюме сохранено');
+}
+function resumeView(id){
+  const r=db.resumes.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Резюме</div><h3 style="margin-bottom:6px">${esc(r.title)}</h3>
+  <div class="rs" style="color:var(--dim);font-size:13px;margin-bottom:12px">${esc(r.city)} · опыт ${r.exp} лет</div>
+  <div class="card-title">Навыки</div><div class="chips">${r.skills.split(',').map(s=>`<span class="chip on">${esc(s.trim())}</span>`).join('')}</div>
+  <div class="card-title">О себе</div><p style="font-size:13.5px;line-height:1.6;color:var(--dim)">${esc(r.about)}</p>
+  <div class="btn-row" style="margin-top:16px"><button class="btn btn-sm btn-primary" onclick="copyResume('${id}')">📋 Скопировать</button>
+  <button class="btn btn-sm btn-danger" onclick="delItem('resumes','${id}','Резюме')">Удалить</button></div>`);
+}
+function copyResume(id){
+  const r=db.resumes.find(x=>x.id===id);
+  const txt=`${r.title}\n${r.city}, опыт ${r.exp} лет\nНавыки: ${r.skills}\nО себе: ${r.about}`;
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Резюме скопировано')).catch(()=>toast('Скопируйте текст вручную из резюме'));
+}
+function mApps(st){
+  const filters=['Все','Отклик','Приглашение','Принят','Отказ'];
+  let arr=db.applications.filter(a=>(st.filter==='Все'||a.status===st.filter)&&(a.vacancy+a.company).toLowerCase().includes(st.q.toLowerCase()));
+  arr.sort((a,b)=>st.sort==='salary'?b.salary-a.salary:b.date.localeCompare(a.date));
+  return `<div class="chips">${filters.map(f=>`<button class="chip ${st.filter===f?'on':''}" onclick="modState.apps.filter='${f}';renderModule()">${f}</button>`).join('')}</div>
+  ${searchBox(st)}
+  <div class="btn-row" style="margin-bottom:10px"><button class="btn btn-sm btn-ghost" onclick="modState.apps.sort=modState.apps.sort==='salary'?'date':'salary';renderModule()">⇅ Сортировать: ${st.sort==='salary'?'по зарплате':'по дате'}</button></div>
+  <div class="card">${arr.map(a=>`<div class="row" onclick="appView('${a.id}')"><div class="ri">📨</div><div class="rb"><div class="rt">${esc(a.vacancy)}</div><div class="rs">${esc(a.company)} · ${fdate(a.date)}</div></div><div class="rr"><span class="pill ${pill(a.status)}">${a.status}</span><div style="font-size:12px;color:var(--dim);margin-top:4px">${money(a.salary)}</div></div></div>`).join('')||'<div class="empty">Ничего не найдено</div>'}</div>`;
+}
+function appView(id){
+  const a=db.applications.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Отклик</div><h3>${esc(a.vacancy)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 12px">${esc(a.company)} · ${money(a.salary)} · ${fdate(a.date)}</p>
+  <span class="pill ${pill(a.status)}">${a.status}</span>
+  <div class="card-title" style="margin-top:16px">История</div>
+  <p style="font-size:13px;color:var(--dim);line-height:1.7">${fdate(a.date)} — отклик отправлен<br>${a.status!=='Отклик'?fdate(a.date)+' — статус: '+a.status:'Ожидает ответа работодателя'}</p>
+  <div class="btn-row" style="margin-top:16px">${a.status==='Приглашение'?`<button class="btn btn-sm btn-primary" onclick="setStatus('applications','${id}','Принят');closeLayers()">✅ Принять приглашение</button>`:''}
+  <button class="btn btn-sm btn-danger" onclick="delItem('applications','${id}','Отклик')">Отозвать</button></div>`);
+}
+function setStatus(coll,id,s){const x=db[coll].find(i=>i.id===id);x.status=s;save();rerender();toast('Статус: '+s)}
+function mJobs(st){
+  const arr=db.jobs.filter(j=>(j.title+j.company).toLowerCase().includes(st.q.toLowerCase()));
+  return `${searchBox(st)}<div class="card">${arr.map(j=>`<div class="row"><div class="ri">⭐</div><div class="rb"><div class="rt">${esc(j.title)}</div><div class="rs">${esc(j.company)} · ${esc(j.city)}</div><div class="chips" style="margin:6px 0 0">${j.tags.map(t=>`<span class="chip" style="padding:3px 8px;font-size:10.5px">${esc(t)}</span>`).join('')}</div></div>
+  <div class="rr">${money(j.salary)}<div class="btn-row" style="margin-top:8px;justify-content:flex-end"><button class="btn btn-sm btn-primary" onclick="applyJob('${j.id}')">Откликнуться</button><button class="btn btn-sm btn-danger" onclick="delItem('jobs','${j.id}','Вакансия')">✕</button></div></div></div>`).join('')||'<div class="empty">Сохранённых вакансий нет</div>'}</div>`;
+}
+function applyJob(id){
+  const j=db.jobs.find(x=>x.id===id);
+  db.applications.unshift({id:uid(),vacancy:j.title,company:j.company,salary:j.salary,status:'Отклик',date:new Date().toISOString().slice(0,10)});
+  save();rerender();toast('Отклик отправлен: '+j.title);
+}
+function mFinance(st){
+  const cats=['Все','Смена','Чаевые','Подработка','Бонус'];
+  const colors={'Смена':'var(--ice)','Чаевые':'var(--amber)','Подработка':'var(--pine)','Бонус':'var(--violet)'};
+  const arr=db.incomes.filter(i=>st.filter==='Все'||i.cat===st.filter).slice().sort((a,b)=>b.date.localeCompare(a.date));
+  const month=monthIncome(),tips=db.incomes.filter(i=>i.cat==='Чаевые'&&i.date.slice(0,7)===new Date().toISOString().slice(0,7)).reduce((s,i)=>s+i.amount,0);
+  const days=[...Array(7)].map((_,i)=>dAgo(6-i));
+  const perDay=days.map(d=>{const o={};['Смена','Чаевые','Подработка','Бонус'].forEach(c=>o[c]=db.incomes.filter(i=>i.date===d&&i.cat===c).reduce((s,i)=>s+i.amount,0));return o});
+  const max=Math.max(...perDay.map(o=>Object.values(o).reduce((a,b)=>a+b,0)),1);
+  const chart=`<div class="chart">${perDay.map((o,i)=>`<div class="col">${['Смена','Чаевые','Подработка','Бонус'].map(c=>o[c]?`<div class="seg" style="height:${o[c]/max*100}%;background:${colors[c]}" title="${c}: ${money(o[c])}"></div>`:'').join('')}<div class="cl">${fdate(days[i]).split(' ')[0]}</div></div>`).join('')}</div>
+  <div class="legend">${Object.entries(colors).map(([c,col])=>`<span><i style="background:${col}"></i>${c}</span>`).join('')}</div>`;
+  return `<div class="kpis"><div class="kpi"><b>${money(month).replace(' ₽','')}</b><span>ДОХОД / МЕС, ₽</span></div><div class="kpi"><b>${money(tips).replace(' ₽','')}</b><span>ЧАЕВЫЕ, ₽</span></div><div class="kpi"><b>${db.incomes.length}</b><span>ЗАПИСЕЙ</span></div></div>
+  <div class="card"><div class="card-title">Последние 7 дней</div>${chart}</div>
+  <div class="card"><div class="card-title">Добавить доход</div>
+    <div class="btn-row"><select class="input" id="f-cat" style="flex:1">${cats.slice(1).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input class="input" id="f-amt" type="number" placeholder="Сумма ₽" style="flex:1"></div>
+    <input class="input" id="f-note" placeholder="Комментарий (необязательно)">
+    <button class="btn btn-primary" onclick="addIncome()">＋ Добавить</button></div>
+  <div class="chips">${cats.map(c=>`<button class="chip ${st.filter===c?'on':''}" onclick="modState.finance.filter='${c}';renderModule()">${c}</button>`).join('')}</div>
+  <div class="card">${arr.slice(0,30).map(i=>`<div class="row"><div class="ri">${{'Смена':'🚕','Чаевые':'🪙','Подработка':'🔧','Бонус':'🎁'}[i.cat]}</div><div class="rb"><div class="rt">${i.cat}</div><div class="rs">${fdate(i.date)} · ${esc(i.note||'')}</div></div><div class="rr" style="color:var(--pine)">+${money(i.amount)}<div><button class="btn btn-sm btn-danger" style="margin-top:6px" onclick="delItem('incomes','${i.id}','Запись')">✕</button></div></div></div>`).join('')||'<div class="empty">Записей нет</div>'}</div>`;
+}
+function addIncome(){
+  const a=+val('f-amt');if(!a||a<=0){toast('Укажите сумму');return}
+  db.incomes.push({id:uid(),date:new Date().toISOString().slice(0,10),cat:val('f-cat'),amount:a,note:val('f-note')});
+  save();rerender();toast('Доход добавлен: '+money(a));
+}
+function mRating(){
+  const r=ratingData();
+  return `<div class="card" style="text-align:center"><div style="font-size:44px;font-weight:800;background:linear-gradient(90deg,var(--amber),var(--ice));-webkit-background-clip:text;background-clip:text;color:transparent">${r.score}<span style="font-size:18px;color:var(--faint)">/100</span></div>
+  ${starsHtml(r.stars)}<p style="color:var(--dim);font-size:12.5px;margin-top:8px">Рейтинг влияет на позицию в подборе у работодателей</p></div>
+  <div class="card"><div class="card-title">Из чего складывается</div>${r.parts.map(p=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${p.label}</span><b>${p.got}/${p.max}</b></div><div class="bar-track"><div class="bar-fill" style="width:${p.got/p.max*100}%;background:${p.c}"></div></div></div>`).join('')}</div>
+  <div class="card"><div class="card-title">Как поднять рейтинг</div>${r.parts.filter(p=>p.got<p.max).map(p=>`<div class="row" style="cursor:default"><div class="ri">💡</div><div class="rb"><div class="rs">${{'Телефон подтверждён':'Подтвердите номер в настройках','Резюме заполнено':'Создайте резюме в разделе «Составить резюме»','Активность откликов':'Откликайтесь на вакансии — каждый отклик даёт +5','Отзывы работодателей':'Выполняйте заказы и просите работодателей оставить отзыв'}[p.label]}</div></div></div>`).join('')||'<div class="empty">Максимум по всем пунктам — отлично!</div>'}</div>
+  <div class="card"><div class="card-title">Отзывы работодателей</div>${db.reviews.map(rv=>`<div class="row" style="cursor:default"><div class="ri">💬</div><div class="rb"><div class="rt">${esc(rv.author)} ${starsHtml(rv.stars)}</div><div class="rs">${esc(rv.text)} · ${fdate(rv.date)}</div></div></div>`).join('')}</div>`;
+}
+function mCourses(st){
+  const arr=st.tab===0?db.courses.prof:db.courses.qual;
+  return tabs(st,['🎓 Профессия','📈 Квалификация'])+`<div class="card">${arr.map(c=>{
+    const en=db.enrollments.find(e=>e.course===c.title);
+    return `<div class="row" style="cursor:default"><div class="ri">${st.tab===0?'🎓':'📈'}</div><div class="rb"><div class="rt">${esc(c.title)}</div><div class="rs">${esc(c.org)} · ${c.hours} ч · ${c.price?money(c.price):'Бесплатно'}</div></div>
+    <div class="rr">${en?`<span class="pill p-ok">Записан</span><div><button class="btn btn-sm btn-ghost" style="margin-top:6px" onclick="unEnroll('${c.title}')">Отменить</button></div>`:`<button class="btn btn-sm btn-primary" onclick="enroll('${c.title}')">Записаться</button>`}</div></div>`}).join('')}</div>
+  <div class="demo-note">После запуска платформы здесь появятся реальные программы учебных центров и ЦЗН с оплатой и сертификатами.</div>`;
+}
+function enroll(t){db.enrollments.push({id:uid(),course:t,date:new Date().toISOString()});save();rerender();toast('Вы записаны: '+t)}
+function unEnroll(t){db.enrollments=db.enrollments.filter(e=>e.course!==t);save();rerender();toast('Запись отменена')}
+function mLegal(st){
+  return `<div class="card"><div class="card-title">Новый вопрос юристу</div>
+  <select class="input" id="l-topic"><option>Трудовое право</option><option>Семейное право</option><option>Жилищное право</option><option>Долги и приставы</option><option>Бизнес и налоги</option></select>
+  <textarea class="input" id="l-text" placeholder="Опишите ситуацию"></textarea>
+  <button class="btn btn-primary" onclick="askLegal()">⚖️ Отправить вопрос</button>
+  <div class="demo-note">Первичный ответ формирует демо-ИИ. Живой юрист подключается после запуска платформы.</div></div>
+  <div class="card"><div class="card-title">Мои обращения</div>${db.legal.map(l=>`<div class="row" onclick="legalView('${l.id}')"><div class="ri">⚖️</div><div class="rb"><div class="rt">${esc(l.topic)}</div><div class="rs">${esc(l.text).slice(0,60)}… · ${fdate(l.date)}</div></div><div class="rr"><span class="pill ${pill(l.status)}">${l.status}</span></div></div>`).join('')||'<div class="empty">Обращений пока нет</div>'}</div>`;
+}
+const LEGAL_ANS={'Трудовое право':'По ТК РФ фиксируйте нарушения письменно: заявление работодателю, затем жалоба в ГИТ или иск в суд. Сроки по спорам об увольнении — 1 месяц, по зарплате — 1 год.','Семейное право':'Соберите документы, подтверждающие ваши требования. Алименты и порядок общения с детьми решаются соглашением или через суд; решение КДН можно обжаловать в вышестоящий орган.','Жилищное право':'Проверьте основания регистрации/собственности в выписке ЕГРН. Споры решаются претензией, затем иском в районный суд.','Долги и приставы':'Запросите у приставов постановление и расчёт задолженности. Удержания ограничены 50% (ст. 99 ФЗ-229); можно подать заявление о сохранении прожиточного минимума.','Бизнес и налоги':'Для старта достаточно самозанятости (НПД 4/6%). Чеки формируются в «Мой налог»; при росте оборота переходите на ИП.'};
+function askLegal(){
+  const t=val('l-text');if(!t){toast('Опишите ситуацию');return}
+  const topic=val('l-topic');
+  db.legal.unshift({id:uid(),topic,text:t,status:'Ответ получен',date:new Date().toISOString().slice(0,10),answer:LEGAL_ANS[topic]});
+  save();rerender();toast('Первичный ответ готов');
+}
+function legalView(id){const l=db.legal.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">${esc(l.topic)} · ${fdate(l.date)}</div><p style="font-size:13.5px;color:var(--dim);margin-bottom:14px">${esc(l.text)}</p>
+  <div class="card-title">Первичный ответ (демо-ИИ)</div><p style="font-size:13.5px;line-height:1.65">${esc(l.answer)}</p>
+  <div class="btn-row" style="margin-top:16px"><button class="btn btn-sm btn-danger" onclick="delItem('legal','${id}','Обращение')">Удалить</button></div>`)}
+function mBusiness(){
+  const done=db.business.filter(b=>b.done).length;
+  return `<div class="card"><div style="display:flex;justify-content:space-between;font-size:13px"><span>Прогресс запуска</span><b>${done}/${db.business.length}</b></div><div class="bar-track"><div class="bar-fill" style="width:${done/db.business.length*100}%;background:linear-gradient(90deg,var(--pine),var(--teal))"></div></div></div>
+  <div class="card">${db.business.map(b=>`<div class="step ${b.done?'done':''}"><input type="checkbox" ${b.done?'checked':''} onchange="toggleStep('${b.id}')"><div><div class="st">${esc(b.t)}</div><div class="ss">${esc(b.s)}</div></div></div>`).join('')}</div>
+  <div class="card"><div class="card-title">Полезное</div><button class="btn" onclick="openModule('legal')">⚖️ Юридическая консультация по регистрации<span class="sub">Самозанятость, ИП, налоги</span></button><button class="btn" onclick="openModule('finance')">💰 Вести учёт доходов<span class="sub">Раздел «Мои финансы»</span></button></div>`;
+}
+function toggleStep(id){const b=db.business.find(x=>x.id===id);b.done=!b.done;save();rerender()}
+function mSettings(){
+  return `<div class="card"><div class="card-title">Профиль</div>
+  <label class="lbl">Имя</label><input class="input" id="set-name" value="${esc(db.profile.name)}">
+  <label class="lbl">Город</label><input class="input" id="set-city" value="${esc(db.profile.city)}">
+  <label class="lbl">Телефон</label><input class="input" id="set-phone" value="${esc(db.profile.phone)}" placeholder="+7…">
+  <button class="btn btn-primary" onclick="saveSettings()">💾 Сохранить</button></div>
+  <div class="card"><div class="card-title">Уведомления</div>${[['sms','SMS'],['push','Push'],['email','Email']].map(([k,l])=>`<div class="toggle"><span>${l}</span><div class="sw ${db.profile.notif[k]?'on':''}" onclick="db.profile.notif.${k}=!db.profile.notif.${k};save();rerender()"></div></div>`).join('')}</div>
+  <div class="card"><button class="btn btn-danger" onclick="resetDemo()">♻️ Сбросить демо-данные</button><button class="btn btn-ghost" onclick="logout()">🚪 Выйти</button></div>`;
+}
+function saveSettings(){db.profile.name=val('set-name')||db.profile.name;db.profile.city=val('set-city');db.profile.phone=val('set-phone');db.profile.verified=db.profile.phone.replace(/\D/g,'').length>=10;save();rerender();toast('Профиль сохранён')}
+function resetDemo(){openModal(`<div class="card-title">Сбросить данные?</div><p style="font-size:13px;color:var(--dim);margin-bottom:16px">Все записи вернутся к начальному демо-состоянию.</p><div class="btn-row"><button class="btn btn-sm btn-danger" onclick="db=seed();save();closeLayers();curMod=null;go('s-seeker');toast('Демо-данные сброшены')">Сбросить</button><button class="btn btn-sm btn-ghost" onclick="closeLayers()">Отмена</button></div>`)}
+
+/* ---- КОМПАНИЯ ---- */
+function mCandidates(st){
+  const filters=['Все','Новый','В резерве','Приглашён','Нанят'];
+  let arr=db.candidates.filter(c=>(st.filter==='Все'||c.status===st.filter)&&(c.name+c.role+c.skills.join(' ')).toLowerCase().includes(st.q.toLowerCase()));
+  arr.sort((a,b)=>st.sort==='exp'?b.exp-a.exp:b.rating-a.rating);
+  return `<div class="chips">${filters.map(f=>`<button class="chip ${st.filter===f?'on':''}" onclick="modState.candidates.filter='${f}';renderModule()">${f}</button>`).join('')}</div>
+  ${searchBox(st)}
+  <div class="btn-row" style="margin-bottom:10px"><button class="btn btn-sm btn-ghost" onclick="modState.candidates.sort=modState.candidates.sort==='exp'?'rating':'exp';renderModule()">⇅ ${st.sort==='exp'?'По опыту':'По рейтингу'}</button>
+  <button class="btn btn-sm btn-ghost" onclick="saveView()">💾 Сохранить вид</button></div>
+  ${db.savedViews.length?`<div class="chips">${db.savedViews.map((v,i)=>`<button class="chip" onclick="loadView(${i})">📌 ${esc(v.name)}</button>`).join('')}</div>`:''}
+  <div class="card">${arr.map(c=>`<div class="row" onclick="candView('${c.id}')"><div class="ri">👤</div><div class="rb"><div class="rt">${esc(c.name)}</div><div class="rs">${esc(c.role)} · ${c.exp} лет · ${esc(c.city)}</div></div><div class="rr"><span class="pill ${pill(c.status)}">${c.status}</span><div style="color:var(--amber);font-size:12px;margin-top:4px">★ ${c.rating}</div></div></div>`).join('')||'<div class="empty">Кандидаты не найдены</div>'}</div>`;
+}
+function saveView(){const st=modState.candidates;db.savedViews.push({name:st.filter+' · '+st.q.slice(0,12),filter:st.filter,q:st.q,sort:st.sort});save();rerender();toast('Вид сохранён')}
+function loadView(i){const v=db.savedViews[i];Object.assign(modState.candidates,{filter:v.filter,q:v.q,sort:v.sort});renderModule()}
+function candView(id){
+  const c=db.candidates.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Кандидат</div><h3>${esc(c.name)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 10px">${esc(c.role)} · ${c.exp} лет · ${esc(c.city)} · <span style="color:var(--amber)">★ ${c.rating}</span></p>
+  <span class="pill ${pill(c.status)}">${c.status}</span>
+  <div class="card-title" style="margin-top:14px">Навыки</div><div class="chips">${c.skills.map(s=>`<span class="chip on">${esc(s)}</span>`).join('')}</div>
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn btn-sm btn-primary" onclick="inviteForm('${c.id}')">📅 Собеседование</button>
+    <button class="btn btn-sm btn-ghost" onclick="setStatus('candidates','${id}','В резерве');closeLayers()">В резерв</button>
+    <button class="btn btn-sm btn-ghost" onclick="hire('${c.id}')">✅ Нанять</button>
+    <button class="btn btn-sm btn-ghost" onclick="noteFor('${esc(c.name)}')">📝 Заметка</button></div>`);
+}
+function inviteForm(cid){
+  const c=db.candidates.find(x=>x.id===cid);
+  openModal(`<div class="card-title">Собеседование · ${esc(c.name)}</div>
+  <select class="input" id="iv-vac">${db.vacancies.map(v=>`<option>${esc(v.title)}</option>`).join('')}</select>
+  <input class="input" type="date" id="iv-date" value="${dAgo(-1)}"><input class="input" type="time" id="iv-time" value="10:00">
+  <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="addInterview('${cid}')">Назначить</button><button class="btn btn-sm btn-ghost" onclick="closeLayers()">Отмена</button></div>`);
+}
+function addInterview(cid){
+  const c=db.candidates.find(x=>x.id===cid);
+  db.interviews.unshift({id:uid(),candidate:c.name,vacancy:val('iv-vac'),dt:val('iv-date')+'T'+val('iv-time'),status:'Запланировано'});
+  c.status='Приглашён';save();closeLayers();rerender();toast('Собеседование назначено');
+}
+function hire(cid){
+  const c=db.candidates.find(x=>x.id===cid);c.status='Нанят';
+  db.staff.push({id:uid(),name:c.name,position:c.role,salary:60000,hired:new Date().toISOString().slice(0,10)});
+  db.payroll.push({id:uid(),name:c.name,salary:60000,bonus:0,paid:false});
+  save();closeLayers();rerender();toast(c.name+' добавлен в штат');
+}
+function noteFor(name){closeLayers();openModule('notes');setTimeout(()=>{document.getElementById('n-title').value='О кандидате: '+name},50)}
+function mNeeds(st){
+  return `<button class="btn btn-primary" onclick="vacForm()">＋ Новая потребность</button>
+  <div class="card">${db.vacancies.map(v=>`<div class="row" onclick="vacView('${v.id}')"><div class="ri">📊</div><div class="rb"><div class="rt">${esc(v.title)}</div><div class="rs">${v.count} чел. · ${esc(v.skills)}</div></div><div class="rr"><span class="pill ${pill(v.status)}">${v.status}</span><div style="font-size:12px;color:var(--dim);margin-top:4px">${money(v.salary)}</div></div></div>`).join('')||'<div class="empty">Потребностей нет</div>'}</div>`;
+}
+function vacForm(id){
+  const v=id?db.vacancies.find(x=>x.id===id):null;
+  openModal(`<div class="card-title">${v?'Редактировать':'Новая потребность'}</div>
+  <input class="input" id="v-title" placeholder="Должность" value="${v?esc(v.title):''}">
+  <div class="btn-row"><input class="input" id="v-count" type="number" placeholder="Кол-во" value="${v?v.count:1}" style="flex:1"><input class="input" id="v-salary" type="number" placeholder="Зарплата ₽" value="${v?v.salary:''}" style="flex:1"></div>
+  <input class="input" id="v-skills" placeholder="Навыки через запятую" value="${v?esc(v.skills):''}">
+  <textarea class="input" id="v-desc" placeholder="Описание">${v?esc(v.desc):''}</textarea>
+  <button class="btn btn-ai" onclick="aiVac()">✨ Собрать описание с демо-ИИ</button>
+  <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="saveVac('${id||''}')">Сохранить</button><button class="btn btn-sm btn-ghost" onclick="closeLayers()">Отмена</button></div>`);
+}
+function aiVac(){
+  const t=val('v-title')||'специалист',s=val('v-skills');
+  document.getElementById('v-desc').value=`Требуется ${t}. Обязанности: выполнение профильных задач, соблюдение стандартов компании, работа в команде. Требования: ${s||'профильный опыт, ответственность'}. Условия: официальное оформление, сменный график, зарплата обсуждается по итогам собеседования.`;
+}
+function saveVac(id){
+  const t=val('v-title');if(!t){toast('Укажите должность');return}
+  const data={title:t,count:+val('v-count')||1,salary:+val('v-salary')||0,skills:val('v-skills'),desc:val('v-desc')};
+  if(id){Object.assign(db.vacancies.find(x=>x.id===id),data)}else db.vacancies.unshift({id:uid(),...data,status:'Открыта'});
+  save();closeLayers();rerender();toast('Потребность сохранена');
+}
+function vacView(id){const v=db.vacancies.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Потребность</div><h3>${esc(v.title)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 10px">${v.count} чел. · ${money(v.salary)}</p><span class="pill ${pill(v.status)}">${v.status}</span>
+  <p style="font-size:13px;color:var(--dim);line-height:1.6;margin-top:12px">${esc(v.desc)}</p>
+  <div class="btn-row" style="margin-top:16px"><button class="btn btn-sm btn-primary" onclick="closeLayers();vacForm('${id}')">✏️ Изменить</button>
+  <button class="btn btn-sm btn-ghost" onclick="setStatus('vacancies','${id}','${v.status==='Открыта'?'Закрыта':'Открыта'}');closeLayers()">${v.status==='Открыта'?'Закрыть':'Открыть'}</button>
+  <button class="btn btn-sm btn-danger" onclick="delItem('vacancies','${id}','Потребность')">Удалить</button></div>`)}
+function mInterviews(st){
+  const filters=['Все','Запланировано','Проведено','Отменено'];
+  const arr=db.interviews.filter(i=>st.filter==='Все'||i.status===st.filter);
+  return `<div class="chips">${filters.map(f=>`<button class="chip ${st.filter===f?'on':''}" onclick="modState.interviews.filter='${f}';renderModule()">${f}</button>`).join('')}</div>
+  <div class="card">${arr.map(i=>`<div class="row" onclick="ivView('${i.id}')"><div class="ri">📅</div><div class="rb"><div class="rt">${esc(i.candidate)}</div><div class="rs">${esc(i.vacancy)} · ${new Date(i.dt).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div><div class="rr"><span class="pill ${pill(i.status)}">${i.status}</span></div></div>`).join('')||'<div class="empty">Собеседований нет</div>'}</div>`;
+}
+function ivView(id){const i=db.interviews.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Собеседование</div><h3>${esc(i.candidate)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 12px">${esc(i.vacancy)} · ${new Date(i.dt).toLocaleString('ru-RU')}</p><span class="pill ${pill(i.status)}">${i.status}</span>
+  <div class="btn-row" style="margin-top:16px"><button class="btn btn-sm btn-primary" onclick="setStatus('interviews','${id}','Проведено');closeLayers()">✅ Проведено</button>
+  <button class="btn btn-sm btn-ghost" onclick="setStatus('interviews','${id}','Отменено');closeLayers()">Отменить</button>
+  <button class="btn btn-sm btn-danger" onclick="delItem('interviews','${id}','Собеседование')">Удалить</button></div>`)}
+function mStaff(){
+  return `<button class="btn btn-primary" onclick="staffForm()">＋ Добавить сотрудника</button>
+  <div class="card">${db.staff.map(s=>`<div class="row" onclick="staffView('${s.id}')"><div class="ri">👔</div><div class="rb"><div class="rt">${esc(s.name)}</div><div class="rs">${esc(s.position)} · с ${fdate(s.hired)}</div></div><div class="rr">${money(s.salary)}</div></div>`).join('')||'<div class="empty">Штат пуст</div>'}</div>`;
+}
+function staffForm(id){const s=id?db.staff.find(x=>x.id===id):null;
+  openModal(`<div class="card-title">${s?'Редактировать':'Новый сотрудник'}</div>
+  <input class="input" id="st-name" placeholder="ФИО" value="${s?esc(s.name):''}">
+  <input class="input" id="st-pos" placeholder="Должность" value="${s?esc(s.position):''}">
+  <input class="input" id="st-sal" type="number" placeholder="Оклад ₽" value="${s?s.salary:''}">
+  <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="saveStaff('${id||''}')">Сохранить</button><button class="btn btn-sm btn-ghost" onclick="closeLayers()">Отмена</button></div>`)}
+function saveStaff(id){
+  const n=val('st-name');if(!n){toast('Укажите ФИО');return}
+  const d={name:n,position:val('st-pos'),salary:+val('st-sal')||0};
+  if(id)Object.assign(db.staff.find(x=>x.id===id),d);else{db.staff.push({id:uid(),...d,hired:new Date().toISOString().slice(0,10)});db.payroll.push({id:uid(),name:n,salary:d.salary,bonus:0,paid:false})}
+  save();closeLayers();rerender();toast('Сотрудник сохранён');
+}
+function staffView(id){const s=db.staff.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Сотрудник</div><h3>${esc(s.name)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 12px">${esc(s.position)} · оклад ${money(s.salary)} · в штате с ${fdate(s.hired)}</p>
+  <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="closeLayers();staffForm('${id}')">✏️ Изменить</button><button class="btn btn-sm btn-danger" onclick="delItem('staff','${id}','Сотрудник')">Уволить</button></div>`)}
+function mReports(){
+  const total=db.candidates.length,inv=db.candidates.filter(c=>c.status==='Приглашён'||c.status==='Нанят').length,iv=db.interviews.filter(i=>i.status==='Проведено').length,hired=db.staff.length;
+  const funnel=[['Кандидаты',total,'var(--ice)'],['Приглашены',inv,'var(--blue)'],['Собеседования',iv,'var(--violet)'],['В штате',hired,'var(--pine)']];
+  const max=Math.max(total,1);
+  const pay=db.payroll.reduce((s,p)=>s+p.salary+p.bonus,0);
+  return `<div class="kpis"><div class="kpi"><b>${db.vacancies.filter(v=>v.status==='Открыта').length}</b><span>ОТКРЫТО ВАКАНСИЙ</span></div><div class="kpi"><b>${iv}</b><span>СОБЕСЕДОВАНИЙ</span></div><div class="kpi"><b>${money(pay).replace(' ₽','')}</b><span>ФОТ / МЕС, ₽</span></div></div>
+  <div class="card"><div class="card-title">Воронка подбора</div>${funnel.map(([l,v,c])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${l}</span><b>${v}</b></div><div class="bar-track"><div class="bar-fill" style="width:${v/max*100}%;background:${c}"></div></div></div>`).join('')}</div>
+  <div class="card"><div class="card-title">Структура штата</div>${db.staff.map((s,i)=>{const cols=['var(--ice)','var(--amber)','var(--pine)','var(--violet)','var(--teal)','var(--magenta)'];return `<div class="row" style="cursor:default"><div class="ri" style="color:${cols[i%6]}">●</div><div class="rb"><div class="rt">${esc(s.position)}</div><div class="rs">${esc(s.name)}</div></div><div class="rr">${money(s.salary)}</div></div>`}).join('')}</div>`;
+}
+function mDocs(st){
+  const kinds=['Договор','Акт'];
+  const arr=db.documents.filter(d=>st.tab<2?d.kind===kinds[st.tab]:true);
+  let body;
+  if(st.tab===2){
+    body=`<div class="card">${[['Трудовой договор','Стандартная форма по ТК РФ'],['Договор ГПХ','Для разовых работ и услуг'],['Акт выполненных работ','Закрытие этапа или заказа']].map(([t,s])=>`<div class="row" style="cursor:default"><div class="ri">📁</div><div class="rb"><div class="rt">${t}</div><div class="rs">${s}</div></div><div class="rr"><button class="btn btn-sm btn-primary" onclick="docForm(null,'${t}')">Использовать</button></div></div>`).join('')}</div>`;
+  } else {
+    body=`<button class="btn btn-primary" onclick="docForm()">＋ Создать документ</button><div class="card">${arr.map(d=>`<div class="row" onclick="docView('${d.id}')"><div class="ri">${d.kind==='Договор'?'📑':'📃'}</div><div class="rb"><div class="rt">${esc(d.type)} · ${esc(d.no)}</div><div class="rs">${esc(d.person)} · ${fdate(d.date)}</div></div><div class="rr"><span class="pill ${pill(d.status)}">${d.status}</span></div></div>`).join('')||'<div class="empty">Документов нет</div>'}</div>`;
+  }
+  return tabs(st,['📑 Договоры','📃 Акты','📁 Шаблоны'])+body;
+}
+function docForm(id,tpl){
+  const kind=tpl&&tpl.includes('Акт')?'Акт':'Договор';
+  openModal(`<div class="card-title">Новый документ</div>
+  <select class="input" id="d-kind"><option ${kind==='Договор'?'selected':''}>Договор</option><option ${kind==='Акт'?'selected':''}>Акт</option></select>
+  <input class="input" id="d-type" placeholder="Тип (Трудовой / ГПХ / Выполненных работ)" value="${tpl?esc(tpl.replace(' договор','').replace('Договор ','')):''}">
+  <input class="input" id="d-person" placeholder="Контрагент / сотрудник">
+  <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="saveDoc()">Создать</button><button class="btn btn-sm btn-ghost" onclick="closeLayers()">Отмена</button></div>`);
+}
+function saveDoc(){
+  const p=val('d-person');if(!p){toast('Укажите контрагента');return}
+  const kind=val('d-kind'),n=db.documents.filter(d=>d.kind===kind).length+1;
+  db.documents.unshift({id:uid(),kind,type:val('d-type')||kind,person:p,no:(kind==='Договор'?'Д':'А')+'-2026-'+String(n).padStart(3,'0'),date:new Date().toISOString().slice(0,10),status:'Черновик'});
+  save();closeLayers();rerender();toast('Документ создан');
+}
+function docView(id){const d=db.documents.find(x=>x.id===id);
+  const next={'Черновик':'На подписи','На подписи':'Подписан'}[d.status];
+  openDrawer(`<div class="card-title">${d.kind} · ${esc(d.no)}</div><h3>${esc(d.type)}</h3><p style="color:var(--dim);font-size:13px;margin:6px 0 12px">${esc(d.person)} · ${fdate(d.date)}</p><span class="pill ${pill(d.status)}">${d.status}</span>
+  <div class="btn-row" style="margin-top:16px">${next?`<button class="btn btn-sm btn-primary" onclick="setStatus('documents','${id}','${next}');closeLayers()">→ ${next}</button>`:''}<button class="btn btn-sm btn-danger" onclick="delItem('documents','${id}','Документ')">Удалить</button></div>`)}
+function mMoney(st){
+  const total=db.payroll.reduce((s,p)=>s+p.salary+p.bonus,0),ndfl=Math.round(total*.13),vzn=Math.round(total*.30);
+  let body;
+  if(st.tab===0){
+    body=`<div class="card">${db.payroll.map(p=>`<div class="row" style="cursor:default"><div class="ri">💵</div><div class="rb"><div class="rt">${esc(p.name)}</div><div class="rs">Оклад ${money(p.salary)}${p.bonus?' + премия '+money(p.bonus):''}</div></div><div class="rr">${p.paid?'<span class="pill p-ok">Выплачено</span>':`<button class="btn btn-sm btn-primary" onclick="payOne('${p.id}')">Выплатить</button>`}</div></div>`).join('')}</div>
+    <button class="btn btn-primary" onclick="payAll()">💸 Выплатить всем (${money(total)})</button>`;
+  } else {
+    body=`<div class="kpis"><div class="kpi"><b>${money(ndfl).replace(' ₽','')}</b><span>НДФЛ 13%, ₽</span></div><div class="kpi"><b>${money(vzn).replace(' ₽','')}</b><span>ВЗНОСЫ 30%, ₽</span></div><div class="kpi"><b>${money(total+ndfl+vzn).replace(' ₽','')}</b><span>ОБЩАЯ НАГРУЗКА, ₽</span></div></div>
+    <div class="card">${db.payroll.map(p=>{const b=p.salary+p.bonus;return `<div class="row" style="cursor:default"><div class="ri">🧾</div><div class="rb"><div class="rt">${esc(p.name)}</div><div class="rs">НДФЛ ${money(b*.13)} · взносы ${money(b*.30)}</div></div><div class="rr">${money(b)}</div></div>`}).join('')}</div>
+    <div class="demo-note">Расчёт демонстрационный (13% НДФЛ, 30% взносов). Реальные ставки зависят от режима налогообложения.</div>`;
+  }
+  return tabs(st,['💵 Зарплаты','🧾 Налоги'])+body;
+}
+function payOne(id){const p=db.payroll.find(x=>x.id===id);p.paid=true;save();rerender();toast('Выплачено: '+p.name)}
+function payAll(){db.payroll.forEach(p=>p.paid=true);save();rerender();toast('Ведомость закрыта — все выплачено')}
+function mMessages(st){
+  if(st.thread){
+    const t=db.threads.find(x=>x.id===st.thread);
+    return `<button class="back-btn" style="margin-bottom:12px" onclick="modState.messages.thread=null;renderModule()">← К списку</button>
+    <div class="card"><div class="rt" style="font-weight:700">${esc(t.name)}</div><div class="rs" style="color:var(--dim);font-size:12px;margin-bottom:14px">${esc(t.role)}</div>
+    <div id="chat">${t.msgs.map(m=>`<div class="msg ${m.from}">${esc(m.text)}<div class="mt">${m.time}</div></div>`).join('')}</div>
+    <div class="chatbox"><input class="input" id="msg-input" placeholder="Сообщение…" onkeydown="if(event.key==='Enter')sendMsg()"><button class="btn btn-sm btn-primary" onclick="sendMsg()">➤</button></div></div>`;
+  }
+  return `<div class="card">${db.threads.map(t=>`<div class="row" onclick="openThread('${t.id}')"><div class="ri">✉️</div><div class="rb"><div class="rt">${esc(t.name)}</div><div class="rs">${esc(t.msgs[t.msgs.length-1].text).slice(0,50)}…</div></div><div class="rr">${t.unread?`<span class="badge" style="position:static;background:linear-gradient(120deg,var(--ice),var(--blue));color:#06202e;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:800">${t.unread}</span>`:''}</div></div>`).join('')}</div>`;
+}
+function openThread(id){const t=db.threads.find(x=>x.id===id);t.unread=0;save();modState.messages.thread=id;renderModule()}
+function sendMsg(){
+  const t=db.threads.find(x=>x.id===modState.messages.thread),txt=val('msg-input');if(!txt)return;
+  const now=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  t.msgs.push({from:'me',text:txt,time:now});save();renderModule();
+  setTimeout(()=>{t.msgs.push({from:'them',text:'Принято, спасибо! Отвечу чуть позже.',time:new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})});save();if(curMod==='messages'&&modState.messages.thread===t.id)renderModule()},1400);
+}
+function mNotes(st){
+  const arr=db.notes.filter(n=>(n.title+n.text).toLowerCase().includes(st.q.toLowerCase()));
+  return `<div class="card"><div class="card-title">Новая заметка</div><input class="input" id="n-title" placeholder="Заголовок"><textarea class="input" id="n-text" placeholder="Текст заметки"></textarea><button class="btn btn-primary" onclick="addNote()">＋ Сохранить</button></div>
+  ${searchBox(st)}<div class="card">${arr.map(n=>`<div class="row" onclick="noteView('${n.id}')"><div class="ri">📝</div><div class="rb"><div class="rt">${esc(n.title)}</div><div class="rs">${esc(n.text).slice(0,60)}… · ${fdate(n.date)}</div></div><div class="rr">›</div></div>`).join('')||'<div class="empty">Заметок нет</div>'}</div>`;
+}
+function addNote(){const t=val('n-title');if(!t){toast('Укажите заголовок');return}
+  db.notes.unshift({id:uid(),title:t,text:val('n-text'),date:new Date().toISOString().slice(0,10)});save();rerender();toast('Заметка сохранена')}
+function noteView(id){const n=db.notes.find(x=>x.id===id);
+  openDrawer(`<div class="card-title">Заметка · ${fdate(n.date)}</div><h3 style="margin-bottom:10px">${esc(n.title)}</h3><p style="font-size:13.5px;color:var(--dim);line-height:1.6">${esc(n.text)}</p>
+  <div class="btn-row" style="margin-top:16px"><button class="btn btn-sm btn-danger" onclick="delItem('notes','${id}','Заметка')">Удалить</button></div>`)}
+function mIntegrations(){
+  const items=[['ones','🟡','1С:Предприятие','Синхронизация кадров и зарплат'],['bitrix','🔵','Битрикс24','CRM, задачи и воронки'],['esia','🔐','Госуслуги (ЕСИА)','Подтверждение аккаунтов'],['tg','📨','Telegram-уведомления','Отклики и собеседования']];
+  return `<div class="card">${items.map(([k,i,t,s])=>{const g=db.integrations[k];return `<div class="toggle"><div style="display:flex;gap:12px;align-items:center"><span style="font-size:22px">${i}</span><div><div style="font-weight:600;font-size:14px">${t}</div><div style="font-size:11.5px;color:var(--faint)">${s}${g.on&&g.sync?' · синхр. '+fdate(g.sync):''}</div></div></div>
+  <div class="sw ${g.on?'on':''}" onclick="toggleInt('${k}')"></div></div>`}).join('')}</div>
+  <button class="btn btn-primary" onclick="syncInt()">🔄 Синхронизировать подключённые</button>
+  <div class="demo-note">В демо режим подключения имитируется. Реальные API подключаются после запуска платформы.</div>`;
+}
+function toggleInt(k){db.integrations[k].on=!db.integrations[k].on;if(db.integrations[k].on)db.integrations[k].sync=new Date().toISOString().slice(0,10);save();rerender();toast(db.integrations[k].on?'Подключено (демо)':'Отключено')}
+function syncInt(){const d=new Date().toISOString().slice(0,10);Object.values(db.integrations).forEach(g=>{if(g.on)g.sync=d});save();rerender();toast('Синхронизация выполнена')}
+function mAI(st){
+  let body;
+  if(st.tab===0){
+    body=`<div class="card"><div class="card-title">Генератор вакансии</div>
+    <input class="input" id="ai-title" placeholder="Должность, например: Водитель-экспедитор">
+    <input class="input" id="ai-skills" placeholder="Требования: категория C, опыт от 3 лет">
+    <input class="input" id="ai-salary" type="number" placeholder="Зарплата ₽">
+    <button class="btn btn-ai" onclick="aiGenVac()">✨ Сгенерировать текст</button>
+    <textarea class="input" id="ai-out" placeholder="Здесь появится текст вакансии" style="min-height:140px"></textarea>
+    <div class="btn-row"><button class="btn btn-sm btn-primary" onclick="aiSaveVac()">💾 Сохранить как потребность</button><button class="btn btn-sm btn-ghost" onclick="copyText('ai-out')">📋 Копировать</button></div></div>`;
+  } else {
+    body=`<div class="card"><div class="card-title">Отбор кандидатов</div>
+    <input class="input" id="ai-req" placeholder="Навыки через запятую: Вождение, 1С">
+    <input class="input" id="ai-exp" type="number" placeholder="Мин. опыт (лет)" value="3">
+    <button class="btn btn-ai" onclick="aiMatch()">🔎 Подобрать кандидатов</button><div id="ai-match"></div></div>`;
+  }
+  return tabs(st,['✨ Вакансия','🔎 Отбор резюме'])+body+`<div class="demo-note">Демо-ИИ работает на правилах без внешних API. После запуска подключается GigaChat / YandexGPT.</div>`;
+}
+function aiGenVac(){
+  const t=val('ai-title')||'специалист',s=val('ai-skills'),sal=+val('ai-salary')||0;
+  document.getElementById('ai-out').value=`ВАКАНСИЯ: ${t.toUpperCase()}\n\nОбязанности:\n— выполнение профильных задач по направлению «${t}»;\n— соблюдение стандартов и сроков компании;\n— взаимодействие с командой и отчётность.\n\nТребования:\n— ${s||'профильный опыт и ответственность'};\n— готовность к сменному графику.\n\nУсловия:\n— зарплата ${sal?money(sal):'по итогам собеседования'};\n— официальное оформление, стабильные выплаты;\n— офис/база: Барнаул.\n\nОткликайтесь в Сибиряке — ответим в течение дня.`;
+  toast('Текст вакансии сгенерирован');
+}
+function aiSaveVac(){
+  const t=val('ai-title');if(!t){toast('Укажите должность');return}
+  db.vacancies.unshift({id:uid(),title:t,count:1,salary:+val('ai-salary')||0,skills:val('ai-skills'),desc:val('ai-out'),status:'Открыта'});
+  save();toast('Вакансия сохранена в «Потребность»');
+}
+function copyText(id){const txt=val(id);(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Скопировано')).catch(()=>toast('Выделите текст и скопируйте вручную'))}
+function aiMatch(){
+  const req=val('ai-req').toLowerCase().split(',').map(s=>s.trim()).filter(Boolean),minExp=+val('ai-exp')||0;
+  const scored=db.candidates.map(c=>{
+    const hit=req.filter(r=>c.skills.join(' ').toLowerCase().includes(r)).length;
+    const score=Math.round((req.length?hit/req.length:0.5)*60+Math.min(c.exp,minExp+2)/(minExp+2)*25+c.rating/5*15);
+    return {c,score,hit};
+  }).filter(x=>x.c.exp>=minExp).sort((a,b)=>b.score-a.score);
+  document.getElementById('ai-match').innerHTML=scored.map(x=>`<div class="row" onclick="candView('${x.c.id}')"><div class="ri">🎯</div><div class="rb"><div class="rt">${esc(x.c.name)}</div><div class="rs">${esc(x.c.role)} · совпадений: ${x.hit}/${req.length||'—'}</div></div><div class="rr" style="color:${x.score>=70?'var(--pine)':x.score>=45?'var(--amber)':'var(--rose)'}">${x.score}%</div></div>`).join('')||'<div class="empty">Подходящих кандидатов нет</div>';
+}
+function mCProfile(){
+  return `<div class="card"><div class="card-title">Реквизиты</div>
+  <label class="lbl">Название</label><input class="input" id="c-name" value="${esc(db.company.name)}">
+  <label class="lbl">ИНН</label><input class="input" id="c-inn" value="${esc(db.company.inn)}">
+  <label class="lbl">Город</label><input class="input" id="c-city" value="${esc(db.company.city)}">
+  <button class="btn btn-primary" onclick="db.company={name:val('c-name'),inn:val('c-inn'),city:val('c-city')};save();rerender();toast('Профиль компании сохранён')">💾 Сохранить</button></div>
+  <div class="card"><button class="btn btn-ghost" onclick="logout()">🚪 Выйти</button></div>`;
+}
+
+/* ================= СТАРТ ================= */
+load();
+if(db.session){go(db.session.role==='company'?'s-company':'s-seeker')}else{go('s-main')}
+</script>
+<script src="sibiryak-db.js"></script>
+</body>
+  </html>
